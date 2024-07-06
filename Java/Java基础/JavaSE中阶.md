@@ -1,6 +1,8 @@
+①②③④⑤⑥⑦⑧⑨⑩
+
 # 一、面向对象
 
-## 1、创建对象
+## 1.创建对象
 
 > 类的加载：将类的字节码文件从磁盘加载到内存中
 
@@ -8,16 +10,7 @@
 String str=new String();//强制进入
 ```
 
-![image-20231105230210098](C:\Users\40500\AppData\Roaming\Typora\typora-user-images\image-20231105230210098.png)
-
-创建对象的过程：
-
-- 第一次创建类的时候，会进行类的加载。
-- 为对象在堆上开辟空间。
-- 初始化对象的属性。
-- 调用构造器，为对象的属性赋值
-
-## 2、构造器
+## 2.构造器
 
 new关键字实际上是在调用一个方法，这个方法叫构造方法（构造器），如果类没有构造器，那么会自动生成默认构造器。
 
@@ -61,14 +54,16 @@ public class Test {
 
 注意：==一般保证空构造器的存在==，空构造器中一般不会进行属性的赋值操作，并且会重载构造器，在重载的构造器中进行属性赋值操作。
 
-## 3、内存分析
+## 3.内存分析
 
 分析下面程序运行的内存管理
 
 ```java
 public class Test {
+    //首先`main`函数开辟栈帧，
     public static void main(String[] args) {
         int age=40;
+        //第一次创建`Person`实例需要加载，即将磁盘上的`.class`文件加载到内存中，然后在堆区为实例开辟空间，并返回一个地址。
         Person person2=new Person(20,"zhangsan",126.6);
         change1(age);
         System.out.println(age);//40
@@ -77,31 +72,22 @@ public class Test {
         change3(person2);
         System.out.println("age:"+person2.age+",name:"+ person2.name+",weight:"+person2.weight);
     }
+    //`change1`中的形参`age`接受外部`age`的实参赋值，两者指向的值相同，但空间不同，因此形参`age`的赋值不影响实参`age`，而且生命周期只存在这个方法中，随着栈帧的回收而一并销毁。
     public static void change1(int age) {
         age=30;
     }
+    //`change2`中的形参`person`接受外部`person2`的实参赋值，两者存储的都是实例的地址`0x96`，但后续又为`person`创建的新的对象，此时`person`存储的是新对象的地址，指向了新的对象。
     public static void change2(Person person) {
         person=new Person(40,"wangwu",172.3);
     }
+    //`change3`中的形参`person`接受外部`person2`的实参赋值，两者存储的都是实例的地址`0x96`，并且调用了类的方法`setAge`，修改了`0x96`指向的对象的属性，外部实际参数`person2`的属性也会被修改。
     public static void change3(Person person) {
         person.setAge(60);
     }
 }
 ```
 
-![image-20231106090752421](C:\Users\40500\AppData\Roaming\Typora\typora-user-images\image-20231106090752421.png)
-
-![image-20231106090805795](C:\Users\40500\AppData\Roaming\Typora\typora-user-images\image-20231106090805795.png)
-
-首先`main`函数开辟栈帧，第一次创建`Person`实例需要加载，即将磁盘上的`.class`文件加载到内存中，然后在堆区为实例开辟空间，并返回一个地址。
-
-`change1`中的形参`age`接受外部`age`的实参赋值，两者指向的值相同，但空间不同，因此形参`age`的赋值不影响实参`age`，而且生命周期只存在这个方法中，随着栈帧的回收而一并销毁。
-
-`change2`中的形参`person`接受外部`person2`的实参赋值，两者存储的都是实例的地址`0x96`，但后续又为`person`创建的新的对象，此时`person`存储的是新对象的地址，指向了新的对象。
-
-`change3`中的形参`person`接受外部`person2`的实参赋值，两者存储的都是实例的地址`0x96`，并且调用了类的方法`setAge`，修改了`0x96`指向的对象的属性，外部实际参数`person2`的属性也会被修改。
-
-## 4、this
+## 4.this
 
 `this`除了可以引用属性和方法外，还可以==引用构造器==，并且只能放到==第一行==。
 
@@ -116,7 +102,7 @@ public Person(int age, String name, double weight) {
     }
 ```
 
-## 5、static
+## 5.static
 
 > static可以修饰属性、方法、代码块、内部类
 
@@ -176,7 +162,7 @@ public static void main(String[] args) {
     }
 ```
 
-## 6、代码块
+## 6.代码块
 
 > 类的组成：属性、方法、代码块、内部类
 
@@ -208,9 +194,9 @@ public class Student {
 
 代码块的==执行顺序==：静态块（类的加载）、构造块、普通块。
 
-# 二、OOP特性
+# 二、OOP
 
-## 1、封装
+## 1.封装
 
 > 将某些东西进行隐藏，然后提供相应的方式进行获取。
 
@@ -256,15 +242,15 @@ public class Test {
 }
 ```
 
-
-
-## 2、继承
+## 2.继承
 
 ### （1）`extends`
 
 > 继承是  ==is-a==的关系
 
 ```java
+package com.lxy.oop;
+
 public class Person {
     int age;
     String name;
@@ -275,15 +261,21 @@ public class Person {
         this.age = age;
         this.name = name;
     }
-    
+
     public void sleep() {
-        System.out.println("person sleep");
+        System.out.println("age:"+age+"\n"+"name:"+name +"\n"+"person sleep");
+    }
+    public void eat() {
+        System.out.println("age:"+age+"\n"+"name:"+name +"\n"+"person eat");
     }
 }
+
 ```
 
 ```java
-public class Student extends Person{//使用`extends`关键字进行继承
+package com.lxy.oop;
+
+public class Student extends Person {
     int stuId;
     //除了上述属性，还有继承自父类的属性
     public Student(){
@@ -293,18 +285,23 @@ public class Student extends Person{//使用`extends`关键字进行继承
     }
 
     public Student(int age, String name, int stuId) {
-        super(age, name);//类比this，super表示继承的父类
+        super(age, name);//类比this，super表示继承父类的构造器
         //其实构造器的第一行都有super() 来调用父类的空构造器，一般省略不写
         this.stuId = stuId;
     }
-    
+
     public void study(){
         System.out.println("student study");
     }
     //除了上述方法，还有继承自父类的方法
-    
+
+    //eat方法重写
+    public void eat() {
+        System.out.println("age:"+age+"\n"+"name:"+name +"\n"+"student eat");
+    }
+
     //对toString的重写，后续会讲解
-     public String toString() {
+    public String toString() {
         return "Student{" +
                 "stuId=" + stuId +
                 ", age=" + age +
@@ -312,17 +309,23 @@ public class Student extends Person{//使用`extends`关键字进行继承
                 '}';
     }
 }
+
 ```
 
 ```java
-public class Test {
+package com.lxy.oop;
+
+public class Main {
     public static void main(String[] args) {
-        Student student1=new Student(18,"zhangsan",0);//继承的age、name属性
-        System.out.println(student1);
-        student1.study();
-        student1.sleep();//继承的sleep方法
+        Person studentA=new Student(18,"zhangSan",2020);
+        studentA.sleep();
+        studentA.eat();
+        //此时该类仍是Person类，并没有添加的方法，需要对类型进行强制转换
+        ((Student)studentA).study();
+        System.out.println(studentA);
     }
 }
+
 ```
 
 注意：子类只能继承一个父类，而父类可以被多个子类继承。
@@ -350,13 +353,11 @@ public class Teacher extends Person{
 
 ### （2）内存分析
 
-![image-20231106110851860](C:\Users\40500\AppData\Roaming\Typora\typora-user-images\image-20231106110851860.png)
-
 `Student`继承自`Person`，因此`student1`可以访问到`sleep()`方法，并且创建对象时，也会为父类的属性开辟空间与初始化并赋值。
 
 ### （3）权限修饰符
 
-![image-20231106111131905](C:\Users\40500\AppData\Roaming\Typora\typora-user-images\image-20231106111131905.png)
+![image-20240706145936990](./assets/image-20240706145936990.png)
 
 注意：如果想让==子类可用，需要至少`protected`的修饰==。
 
@@ -375,12 +376,12 @@ public class Teacher extends Person{
 ```java
 //重写了父类的sleep()，保持了别名、形参列表均一致
 public void sleep() {
-        System.out.println("student sleep 6 hour");
+        System.out.println("Students only sleep 8 hours a day");
     }
 ```
 
 ```java
-public class Test {
+public class Main {
     public static void main(String[] args) {
         Student student1=new Student(18,"zhangsan",0);
         student1.sleep();//输出student sleep 6 hour，实现了方法的重写
@@ -421,9 +422,9 @@ public class Student extends Person{
 
 ### （5）继承条件下构造器的执行
 
-![image-20231106113432838](C:\Users\40500\AppData\Roaming\Typora\typora-user-images\image-20231106113432838.png)
-
 注意：`Person`隐藏了一个`super();`，指向`Object`类。
+
+每一个构造器第一行都会隐式调用父类的空构造器。
 
 ### （6）`Object`
 
@@ -431,7 +432,7 @@ public class Student extends Person{
 
 所有类都直接或间接的继承自`Object`类，`Object`类是所有类的根基类，也就意味着所有的对象都拥有`Object`类的属性和方法。
 
-#### 1）`toString`
+#### ① `toString`
 
 ```java
 public String toString() {
@@ -473,9 +474,7 @@ public class Test {
 }
 ```
 
-
-
-#### 2）`equals`
+#### ② `equals`
 
 ```java
 public boolean equals(Object obj) {
@@ -529,24 +528,14 @@ if (person instanceof Serializable) {
 
 ### （7）类与类的关系
 
-> 类之间主要有四种关系：依赖（Dependency）、关联（Association）、聚合（Aggregation）和组合（Composition）以及继承（Inheritance）。
+> 类之间主要有五种关系：依赖（Dependency）、关联（Association）、聚合（Aggregation）和组合（Composition）以及继承（Inheritance）。
 >
 
-1. **依赖（Dependency）**：
-   - **定义**：一个类的改变会影响到依赖它的类，或者说一个类需要使用依赖的类。
-   - **如何识别**：一个类作为另一个类的操作（方法）的==参数、局部变量或者是静态方法的调用==。
-2. **关联（Association）**：
-   - **定义**：两个类之间的一种连接，它使得一个类知道另一个类的属性和方法。关联可以是单向的或者双向的。
-   - **如何识别**：一个类持有另一个类的引用作为一个==属性==。
-3. **聚合（Aggregation）**：
-   - **定义**：特殊的关联，是整体和部分的关系，但是==部分可以脱离整体==而单独存在。
-   - **如何识别**：一个类作为另一个类的成员变量，但是仍然可以独立于那个类存在。
-4. **组合（Composition）**：
-   - **定义**：更强的聚合关系，==部分不能脱离整体==存在，整体的生命周期控制部分的生命周期。
-   - **如何识别**：一个类的对象是另一个类对象的一部分，并且如果整体对象不存在，部分对象也将不复存在。
-5. **继承（Inheritance）**：
-   - **定义**：一种类与类的层次关系，子类继承父类的特征和行为，可以增加新的特征和行为或覆盖父类的方法。
-   - **如何识别**：使用关键字如`extends`来表明一个类是另一个类的子类。
+1. **依赖（Dependency）**：一个类的改变会影响到依赖它的类，或者说一个类需要使用依赖的类。
+2. **关联（Association）**：两个类之间的一种连接，它使得一个类知道另一个类的属性和方法。关联可以是单向的或者双向的。
+3. **聚合（Aggregation）**：特殊的关联，是整体和部分的关系，但是==部分可以脱离整体==而单独存在。
+4. **组合（Composition）**：更强的聚合关系，==部分不能脱离整体==存在，整体的生命周期控制部分的生命周期。
+5. **继承（Inheritance）**：一种类与类的层次关系，子类继承父类的特征和行为，可以增加新的特征和行为或覆盖父类的方法。
 
 ## 3、多态
 
@@ -610,13 +599,11 @@ public class Test {
 
 ### （3）内存分析
 
-![image-20231106141616036](C:\Users\40500\AppData\Roaming\Typora\typora-user-images\image-20231106141616036.png)
-
 编译期间`animal1`的类型为`Animal`，指向`Animal.class`的字节码信息，但在运行期，父类引用子类实例，`Animal`类型的`animal1`接收了`Dog`类型的实例，并且该子类重写了方法，因此调用方法时，优先执行的是子类重写的方法。
 
 ### （4）向上转型、向下转型
 
-#### 1）向上转型
+#### ① 向上转型
 
 ```java
 Animal animal1=new Dog();
@@ -624,7 +611,7 @@ Animal animal1=new Dog();
 //animal1.age=3;
 ```
 
-#### 2）向下转型
+#### ② 向下转型
 
 ```java
 Animal animal1=new Dog();
@@ -678,7 +665,7 @@ public class Test {
 
 ### （6）`final`
 
-#### 1）`final`修饰属性
+#### ① `final`修饰属性
 
 不可以被修改，如果修饰的是引用类型，那么就是其地址不可被修改，但其属性依旧可以修改。
 
@@ -693,11 +680,11 @@ public class Test {
 }
 ```
 
-#### 2）`final`修饰方法
+#### ② `final`修饰方法
 
 `final`修饰的方法，该方法无法被重写。
 
-#### 3）`final`修饰类
+#### ③ final`修饰类
 
 `final`修饰的类，该类无法被继承，同样该类里面的方法一样不能被重写。
 
@@ -715,8 +702,6 @@ public final class Person {
 public class Teacher extends Person{//不可以被继承，Person被final修饰
 }
 ```
-
-#### 4）Math类
 
 Math类被`final`修饰，因此其不能被继承，方法也无法重写。并且`private`修饰了构造器，外部无法创建Math对象，因此Math方法、属性均被`static`修饰，可以通过类来访问。
 
@@ -779,7 +764,7 @@ public class Test {
 
 > 定义规则
 
-#### 1）`interface`和`implements`
+#### ① interface`和`implements`
 
 声明格式类比`class`，与类是同一层次的概念，但也有其特殊的地方。
 
@@ -844,13 +829,13 @@ public class Test {
 }
 ```
 
-#### 2）继承和实现
+#### ② 继承和实现
 
 继承：==is-a==的关系
 
 实现：==has-a==的关系
 
-#### 3）新特性：非抽象方法
+#### ③ 新特性：非抽象方法
 
 - ==`default`修饰==，如果需要重写则不能加`default`
 - ==静态方法==
@@ -894,7 +879,7 @@ public class Test implements TestInterface01{
 
 ### （9）内部类
 
-#### 1）成员内部类
+#### ① 成员内部类
 
 ```java
 public class TestOuter {
@@ -941,7 +926,7 @@ public class Test {
 }
 ```
 
-#### 2）局部内部类
+#### ② 局部内部类
 
 ```java
 public interface TestInterface01 {
@@ -988,9 +973,19 @@ public class TestOuter {
 }
 ```
 
+匿名内部类经常用于线程的创建
+
+```java
+new Thread(new Runnable() {
+            public void run() {};
+        }).start();
+```
+
+
+
 # 三、异常
 
-## 1、异常的引入
+## 1.异常的引入
 
 如下是一个两数相除的方法。但发现当输入非整数或者/0时都会发生报错。
 
@@ -1008,15 +1003,11 @@ public class Test {
 
 输入非整数时，出现`InputMismatchException`输入不匹配异常
 
-![image-20231108140026057](C:\Users\40500\AppData\Roaming\Typora\typora-user-images\image-20231108140026057.png)
-
 除0时，出现`ArithmeticException`算是异常
-
-![image-20231108135811959](C:\Users\40500\AppData\Roaming\Typora\typora-user-images\image-20231108135811959.png)
 
 我们可以给异常下定义：当程序运行时，发生了意外的情况，组织了程序的正常运行
 
-## 2、`try-catch`
+## 2.`try-catch`
 
 当然，上述错误可以使用`if-else`语句来进行排查。但是对于复杂的情况，排查是否能完整、代码的可读性以及编程效率是否达到要求，造成了很大的困难。因此就有了异常处理的机制：`try-catch-finally`。
 
@@ -1064,11 +1055,9 @@ public class Test {
 }
 ```
 
-![image-20231108141520749](C:\Users\40500\AppData\Roaming\Typora\typora-user-images\image-20231108141520749.png)
+如果异常被捕获，那么程序会继续运行。
 
-结果显示，如果异常被捕获，那么程序会继续运行。
-
-## 3、处理异常
+## 3.处理异常
 
 处理异常的方法：
 
@@ -1104,8 +1093,6 @@ public class Test {
 }
 ```
 
-4、`try-catch-finally`
-
 上面提到我们可以捕获异常保证程序的继续运行，但是在`catch`里继续抛出异常后，程序并没有继续运行，并且如果在`try`中遇到`return`程序也不会继续运行。
 
 我们可以使用`finally`继续执行程序。
@@ -1119,8 +1106,7 @@ public class Test {
             int x = sc.nextInt();
             int y = sc.nextInt();
             System.out.println(x / y);
-            return；//即使加了return，也是finally先执行
-            //System.exit(0);//终止当前的虚拟机执行，finally不会执行
+            //异常后面的就不能继续运行了
         } catch (Exception e) {
             throw e;
         }
@@ -1133,7 +1119,7 @@ public class Test {
 
 一般应用场景：关闭数据库资源，关闭IO流资源，关闭socket资源
 
-## 4、多重`catch`
+## 4.多重`catch`
 
 `try`中出现异常以后，将异常类型跟`catch`捕获的类型依次比较，执行第一个与异常类型匹配的`catch`语句，一旦执行其中一条`catch`语句之后，后面的`catch`语句就会被忽略了。
 
@@ -1183,7 +1169,7 @@ public class Test {
 
 ## 5、异常的分类
 
-![image-20231108150712475](C:\Users\40500\AppData\Roaming\Typora\typora-user-images\image-20231108150712475.png)
+![image-20240706152923160](./assets/image-20240706152923160.png)
 
 ### （1）运行时异常
 
@@ -1236,13 +1222,13 @@ public class Test2 {
 }
 ```
 
-## 6、`throws`和`throw`区别
+## 6.`throws`和`throw`区别
 
 `throw`：异常出现的源头，==制造异常==，并向外抛出。后面加异常实例，在方法内部。
 
 `throws`：向外抛出异常，==提醒外部需要处理异常==。后面加异常类，在方法标签处。
 
-## 7、自定义异常
+## 7.自定义异常
 
 ```java
 public class Test {
@@ -1293,13 +1279,11 @@ public class Test {
 
 # 四、常用类
 
-## 1、包装类
+## 1.包装类
 
 ### （1）包装类的引入
 
 将基本数据类型进行封装，以便更好的管理。并且在后续的学习的集合中，集合只能存储引用类型。
-
-![image-20231108162552613](C:\Users\40500\AppData\Roaming\Typora\typora-user-images\image-20231108162552613.png)
 
 ### （2）`Integer`介绍
 
@@ -1395,7 +1379,7 @@ public class Test {
 }
 ```
 
-## 2、日期类
+## 2.日期类
 
 ### （1）java.util.Date
 
@@ -1569,7 +1553,7 @@ public class Test2 {
 }
 ```
 
-## 3、Math类
+## 3.Math类
 
 ### （1）静态导入
 
@@ -1735,7 +1719,7 @@ public class Test6 {
 
 ### （5）`StringBuilder`类
 
-#### 1）简单的部分源码
+#### ① 简单的部分源码
 
 ```JAVA
 //StringBuilder
@@ -1773,7 +1757,7 @@ abstract class AbstractStringBuilder implements Appendable, CharSequence {
 
 ```
 
-#### 2）数组的扩容
+#### ② 数组的扩容
 
 ```java
 private void ensureCapacityInternal(int minimumCapacity) {
@@ -1784,7 +1768,7 @@ private void ensureCapacityInternal(int minimumCapacity) {
     }
 ```
 
-#### 3）内存分析
+#### ③ 内存分析
 
 ```java
 public class Test7 {
@@ -1794,17 +1778,13 @@ public class Test7 {
 }
 ```
 
-![image-20231109092608125](C:\Users\40500\AppData\Roaming\Typora\typora-user-images\image-20231109092608125.png)
-
-
-
-#### 4）`StringBuilder`类的可变性
+#### ④`StringBuilder`类的可变性
 
 对比`String`类的不可变性：==`String`在地址不改变的情况下，无法修改字符串==。
 
 `StringBuilder` ==允许你在不创建新对象的情况下修改字符序列==。
 
-#### 5）`StringBuffer`类
+#### ⑤`StringBuffer`类
 
 JDK1.5新增，相比`StringBuilder`类效率低，但线程安全
 
@@ -1812,9 +1792,9 @@ JDK1.5新增，相比`StringBuilder`类效率低，但线程安全
 
 > 集合只能存放引用数据类型的数据。
 
-## 1、`Collection`接口
+![image-20240706153719248](./assets/image-20240706153719248.png)
 
-![image-20231109175511056](C:\Users\40500\AppData\Roaming\Typora\typora-user-images\image-20231109175511056.png)
+## 1.`Collection`接口
 
 ### （1）`Collection`接口常用方法以及遍历
 
@@ -1870,7 +1850,7 @@ public class Test {
 
 ### （2）`List`接口
 
-#### 1）`List`接口常用方法以及遍历
+#### ①`List`接口常用方法以及遍历
 
 ```java
 public class Test2 {
@@ -1916,7 +1896,7 @@ public class Test2 {
 }
 ```
 
-#### 2）`ArrayList`类
+#### ② `ArrayList`类
 
 下面是`ArrayList`类简单的源码分析
 
@@ -1972,7 +1952,7 @@ public class ArrayList<E> extends AbstractList<E>
 
 类似`ArrayList`的实现类还有`Vector`，底层初始化开辟10个默认空间长度，并采用了2倍的扩容效率。具有线程安全，但效率低的特点，已被淘汰使用。
 
-#### 3）泛型
+#### ③ 泛型
 
 集合在设计阶段不能确定这个集合实际存储的对象类型，一般设计为`Object`，JDK1.5之后使用泛型来解决。因为这个时候除了对象的类型不确定，其他的部分是确定的，==把对象的类型设计成一个参数，这个类型参数叫做泛型==。
 
@@ -2064,6 +2044,8 @@ public class Test5 {
 
 当然我们在使用方法时，也可能==传入不同的泛型==，也需要用通配符的方法接收。
 
+类型擦除（Type Erasure）是编程中的一种技术，主要应用于泛型编程中。它允许代码在运行时忽略或“擦除”类型信息，使得同一段代码可以处理不同类型的数据，而无需在每个具体类型上进行重复编写。
+
 ```java
 public class Test4 {
 	//泛型方法
@@ -2126,7 +2108,7 @@ public class Test5 {
 }
 ```
 
-#### 4）`LinkedList`类
+#### ④ `LinkedList`类
 
 下面`LinkedList`类的常用方法以及遍历
 
@@ -2262,9 +2244,7 @@ public class LinkedList<E>{//泛型
 }
 ```
 
-#### 5）``iterator()`、`Iterator`、`Iterable`
-
-![image-20231109153414568](C:\Users\40500\AppData\Roaming\Typora\typora-user-images\image-20231109153414568.png)
+#### ⑤ ``iterator()`、`Iterator`、`Iterable`
 
 注意：
 
@@ -2273,9 +2253,7 @@ public class LinkedList<E>{//泛型
 
 ### （3）`Set`接口
 
-
-
-#### 1）`HashSet`类
+#### ① HashSet`类
 
 下面是`HashSet`类的简单使用
 
@@ -2323,8 +2301,6 @@ public class Test8 {
 - 将对象存放到数组中，如果存放的位置相同，对象值不相同，那么将以链表的形式头插进数组内，值相同，那么就修改当前位置对象的`name`属性。
 
 `HashSet`类的底层机制保证了该集合，有序、唯一的特性。
-
-![image-20231109193026498](C:\Users\40500\AppData\Roaming\Typora\typora-user-images\image-20231109193026498.png)
 
 但这只是简单的描述，对于哈希表的结构以及原理，后续我们会深入学习。
 
@@ -2374,9 +2350,7 @@ public class Test8 {
 
 通过对比我们发现`LinkedHashSet`类，按照放入的顺序来排序，其实`LinkedHashSet`类底层在数组上额外添加了一个总链表，使得该类变得有序（与元素放入的顺序无关）。
 
-
-
-#### 2）比较器
+#### ② 比较器
 
 - 内部比较器
 
@@ -2491,7 +2465,7 @@ public class Test9 {
 
 更推荐使用外部比较器，拓展性更高
 
-#### 3）`TreeSet`类
+#### ③ `TreeSet`类
 
 下面是`TreeSet`类的简单使用
 
@@ -2596,9 +2570,9 @@ TreeSet<Student> set2=new TreeSet<>(new Comparator<Student>() {
 });
 ```
 
-## 2、`Map`接口
+## 2.`Map`接口
 
-![image-20231109210610994](C:\Users\40500\AppData\Roaming\Typora\typora-user-images\image-20231109210610994.png)
+![image-20240706153738396](./assets/image-20240706153738396.png)
 
 ### （1）`Map`接口常用方法以及遍历
 
@@ -2898,7 +2872,7 @@ static final class Entry<K,V> implements Map.Entry<K,V> {
 }
 ```
 
-## 3、`Collections`工具类
+## 3.`Collections`工具类
 
 简单的使用
 
@@ -2930,7 +2904,7 @@ public class Test13 {
 
 # 六、IO流
 
-## 1、`File`类
+## 1.`File`类
 
 内存中存放的数据在计算机关机后就会消失。要==长久保存数据==，就要使用硬盘、光盘、U 盘等设备。为了便于数据的管理和检索，引入了“文件”的概念。一篇文章、一段视频、一个可执行程序，都可以被保存为一个文件，并赋予一个文件名。操作系统以文件为单位管理磁盘中的数据。
 
@@ -2987,7 +2961,7 @@ public class Test02 {
 }
 ```
 
-## 2、IO流
+## 2.IO流
 
 `File`类的使用只能封装文件或目录，但不能直接对文件内容进行操作，需要使用IO流，用于处理设备之间的==数据传输==。
 
