@@ -1,6 +1,8 @@
+①②③④⑤⑥⑦
+
 # 一、`Junit`
 
-## 1、`Junit`单元测试
+## 1.`Junit`单元测试
 
 之前用于测试程序的方法，需要创建`Test`类，调用`main`方法，并且与业务逻辑冗余，如果测试逻辑不同，还需要写多个测试类。
 
@@ -33,8 +35,6 @@ public class Test {
 
 我们一般将业务与测试分为不同的包，并按照命名原则进行命名。
 
-![image-20231113112409109](C:\Users\40500\AppData\Roaming\Typora\typora-user-images\image-20231113112409109.png)
-
 编写`CalculatorTest`类
 
 ```java
@@ -58,10 +58,6 @@ public class CalculatorTest {
     }
 }
 ```
-
-运行结果如下：
-
-![image-20231113113038327](C:\Users\40500\AppData\Roaming\Typora\typora-user-images\image-20231113113038327.png)
 
 注意：==测试通过只是未检测到程序异常，但并不代表业务逻辑正确==，还需要使用`Assert`类的`assertEquals()`方法进行预测判断。
 
@@ -110,13 +106,13 @@ public class CalculatorTest {
 
 ### （2）常用注解
 
-#### 1）`Junit`注解
+#### ① `Junit`注解
 
 - `@Test`：定义测试方法
 - `@Before`：设置测试环境
 - `@After`：设置测试环境
 
-#### 2）`javadoc`注解
+#### ② javadoc`注解
 
 Javadoc 注释用于为 Java 类、接口、方法、字段和构造函数生成 API 文档。这些注释写在代码元素的声明之前，用 `/** ... */` 包围。
 
@@ -131,15 +127,11 @@ Javadoc 注释用于为 Java 类、接口、方法、字段和构造函数生成
 
 Javadoc 工具可用于从这些注释中生成 HTML 格式的 API 文档。这个工具扫描源代码文件中的 Javadoc 注释，并生成对应的 API 文档页面。
 
-![image-20231113121518955](C:\Users\40500\AppData\Roaming\Typora\typora-user-images\image-20231113121518955.png)
-
-#### 3）常用内置注解
+#### ③ 常用内置注解
 
 - **`@Override`**：表明一个方法声明打算重写超类中的方法。
 - **`@Deprecated`**：==标记已经不再推荐使用的方法或类==，这通常是因为它们已经被更好的选项所取代。
 - **`@SuppressWarnings`**：指示编译器忽略特定的警告。
-
-#### 4）框架注解
 
 在现代Java开发中，注解广泛用于替代传统的配置文件。例如：在早期版本的 Spring 框架中，配置通常是通过 XML 文件进行的。随着 Spring 2.5 的发布，注解开始被用来替代或补充 XML 配置。
 
@@ -389,13 +381,13 @@ public class Test {
 
 # 三、反射
 
-## 1、概念
+## 1.概念
 
 Java 反射是一个功能强大的机制，==允许程序在运行时检查或修改类的行为==。反射API主要位于`java.lang.reflect`包中，提供了一种方法来==动态地加载类、访问类的成员、修改属性==等，即使在编译时不知道具体的类和方法。
 
 例如，通过反射，你可以在不知道类名的情况下，实例化一个对象，调用其方法，或者改变它的属性。这是一种强大的特性，但也可能导致代码难以理解和维护，并且可能降低性能。
 
-## 2、`Class`类
+## 2.`Class`类
 
 在程序执行的时候，将.class文件读入到JVM中，每当JVM加载一个类时，就会为该类创建一个`Class`对象。
 
@@ -420,6 +412,7 @@ Java 反射是一个功能强大的机制，==允许程序在运行时检查或�
 - 使用`.class`语法，例如`String.class`。
 - 调用对象的`.getClass()`方法，例如`"hello".getClass()`。
 - 使用`Class.forName()`方法动态加载类，并获取类的`Class`对象，例如`Class.forName("java.lang.String")`。
+- 类加载器
 
 ```java
 public class Person  {
@@ -498,7 +491,7 @@ public class Test02 {
 - 对象序列化。
 - 注解处理。
 
-#### 1）获取构造器，并创建对象
+#### ① 获取构造器，并创建对象
 
 ```java
 public class Test03 {
@@ -519,7 +512,7 @@ public class Test03 {
 }
 ```
 
-#### 2）获取属性，并赋值
+#### ② 获取属性，并赋值
 
 ```java
 public class Test04 {
@@ -557,7 +550,7 @@ public class Test04 {
 }
 ```
 
-#### 3）获取方法，并调用
+#### ③ 获取方法，并调用
 
 ```java
 public class Test05 {
@@ -605,7 +598,7 @@ public class Test05 {
 }
 ```
 
-#### 4）获取包、接口、注解
+#### ④ 获取包、接口、注解
 
 ```java
 public class Test06 {

@@ -1,6 +1,6 @@
 package com.lxy.basic;
 
-public enum Day {
+public enum Day  {
     // 枚举常量
     SUNDAY(0, "星期天"),
     MONDAY(1, "星期一"),
@@ -30,11 +30,8 @@ public enum Day {
         return week;
     }
 
-    public static void main(String[] args) {
-        Day friday = Day.FRIDAY;
-        Day sunday = Day.SUNDAY;
-
-        System.out.println("Friday: " + friday.getId() + ", " + friday.getWeek());
-        System.out.println("Sunday: " + sunday.getId() + ", " + sunday.getWeek());
+    @Override
+    public String toString() {
+       return  "Day{"+id+","+week+"}";
     }
 }
