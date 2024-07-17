@@ -2,7 +2,7 @@
 
 ## 1.ORM
 
-ORM（Object-Relational Mapping，对象关系映射）框架是一种在关系型数据库和对象之间进行自动化持久化数据的技术。ORM框架允许开发者用他们自己的编程语言中的对象来操作数据，而不必直接编写SQL查询语言，这极大地简化了数据操作和开发过程。
+==ORM（Object-Relational Mapping，对象关系映射）框架是一种在关系型数据库和对象之间进行自动化持久化数据的技术。==ORM框架允许开发者用他们自己的编程语言中的对象来操作数据，而不必直接编写SQL查询语言，这极大地简化了数据操作和开发过程。
 
 ### （1）持久化
 
@@ -14,7 +14,7 @@ ORM（Object-Relational Mapping，对象关系映射）框架是一种在关系�
 
 ## 2.MyBatis概述
 
-MyBatis 是一个流行的==Java持久层框架==，它提供了==半自动化的ORM==功能。通过MyBatis，开发者可以==通过简单的XML或注解来配置和映射原生信息，从而实现Java对象与数据库表之间的映射==。
+==MyBatis 是一个流行的Java持久层框架，它提供了半自动化的ORM功能。通过MyBatis，开发者可以通过简单的XML或注解来配置和映射原生信息，从而实现Java对象与数据库表之间的映射。==
 
 ## 3.MyBatis简单使用
 
@@ -1134,7 +1134,7 @@ MyBatis 的缓存机制是一个重要的特性，它可以显著提高应用程
 二级缓存默认是关闭的，需要在 MyBatis 配置文件中全局开启，同时还需要在 Mapper 映射文件中单独启用。
 
 1. **全局配置**：在 MyBatis 配置文件中开启二级缓存。
-    
+   
     ```xml
     <settings>
         <setting name="cacheEnabled" value="true"/>
@@ -1323,8 +1323,6 @@ public class GeneratorSqlmap {
     }
 }
 ```
-
-2.
 
 
 

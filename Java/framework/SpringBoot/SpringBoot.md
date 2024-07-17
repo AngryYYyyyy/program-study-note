@@ -73,15 +73,15 @@ public class Application {
 
 创建项目
 
-![image-20240319094227985](D:\笔记\MCA\SSM\image-20240319094227985.png)
+![image-20240319094227985](.\assets\image-20240319094227985.png)
 
 设置WEB-INF
 
-![image-20240319094331797](D:\笔记\MCA\SSM\image-20240319094331797.png)
+![image-20240319094331797](.\assets\image-20240319094331797.png)
 
 ### （3）项目结构
 
-![image-20240319092107809](D:\笔记\MCA\SSM\image-20240319092107809.png)
+![image-20240319092107809](.\assets\image-20240319092107809.png)
 
 ## 2.项目配置
 
@@ -531,7 +531,7 @@ spring:
 
 > [Druid Stat Index](http://localhost:8080/druid/index.html)
 
-![image-20240319115616483](D:\笔记\MCA\SSM\image-20240319115616483.png)
+![image-20240319115616483](.\assets\image-20240319115616483.png)
 
 
 

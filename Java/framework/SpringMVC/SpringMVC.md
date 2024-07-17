@@ -1,18 +1,18 @@
 # 一、简介
 
-Spring MVC是Spring框架的一部分，用于构建Web应用程序。==MVC代表模型-视图-控制器==，这是一种设计模式，用于分离应用程序的不同方面，使管理和维护变得更容易。在Spring MVC中：
+Spring MVC是Spring框架的一部分，用于构建Web应用程序。MVC代表模型-视图-控制器，这是一种设计模式，用于分离应用程序的不同方面，使管理和维护变得更容易。在Spring MVC中：
 
-- **模型（Model）**代表应用程序的数据模型，通常是==业务模型和数据访问层==的组合，负责处理应用程序的数据逻辑。
-- **视图（View）**负责==渲染模型数据==，通常是通过JSP或其他模板引擎生成HTML输出。
-- **控制器（Controller）**作为==模型和视图之间的中介==，处理用户请求，基于请求数据执行业务逻辑，并选择一个视图进行响应。
+- **模型（Model）**代表应用程序的数据模型，通常是业务模型和数据访问层的组合，负责处理应用程序的数据逻辑。
+- **视图（View）**负责渲染模型数据，通常是通过JSP或其他模板引擎生成HTML输出。
+- **控制器（Controller）**作为模型和视图之间的中介，处理用户请求，基于请求数据执行业务逻辑，并选择一个视图进行响应。
 
 Spring MVC框架通过一系列注解和约定，简化了Web应用程序的开发。主要特点包括：
 
 - **易于集成**：Spring MVC可以轻松地与Spring框架的其他部分（如Spring Security, Spring Data）集成，提供了一站式的解决方案。
-- **灵活的URL映射**：控制器可以==通过注解轻松地映射URL到具体的处理方法==。
-- **强大的数据绑定**：==自动将请求参数绑定到业务对象==，简化了数据处理。
+- **灵活的URL映射**：控制器可以通过注解轻松地映射URL到具体的处理方法。
+- **强大的数据绑定**：自动将请求参数绑定到业务对象，简化了数据处理。
 - **丰富的视图支持**：支持多种视图技术，包括但不限于JSP、Thymeleaf、Freemarker等。
-- **异常处理**：提供了一种简单的方式来==处理应用程序中的异常==。
+- **异常处理**：提供了一种简单的方式来处理应用程序中的异常。
 
 总的来说，Spring MVC提供了一个强大、灵活的框架，使得开发复杂的Web应用程序变得更简单、更结构化。
 
@@ -191,7 +191,7 @@ public class MyController {
 
 ### （1）DispatcherServlet
 
-- **作用**：是Spring MVC的==前端控制器==（Front Controller）。它负责接收所有的请求并将它们委托给相应的处理器，是==整个流程控制的中心==，由它调用其它组件处理用户的请求，降低了组件之间的耦合性。
+- **作用**：是Spring MVC的前端控制器（Front Controller）。它负责接收所有的请求并将它们委托给相应的处理器，是整个流程控制的中心，由它调用其它组件处理用户的请求，降低了组件之间的耦合性。
 - **职责**：初始化Spring应用上下文，解析请求，查找对应的Controller，并进行请求分发。
 
 ### （2）HandlerMapping
@@ -199,22 +199,22 @@ public class MyController {
 - **实例**：有多种实现，比如`RequestMappingHandlerMapping`用于处理带有`@RequestMapping`注解的方法。
 
 ### （3）HandlerAdapter
-- **作用**：DispatcherServlet通过它来调用Controller的处理方法。HandlerAdapter负责==将请求映射到相应的控制器方法==。
+- **作用**：DispatcherServlet通过它来调用Controller的处理方法。HandlerAdapter负责将请求映射到相应的控制器方法。
 - **特点**：它使得Controller的方法签名可以灵活多变，不必遵循单一模式。
 
 ### （4）ModelAndView
-- **作用**：==封装了模型数据和视图信息==。控制器处理完用户请求后，会创建并返回这个对象。
+- **作用**：封装了模型数据和视图信息。控制器处理完用户请求后，会创建并返回这个对象。
 - **组成**：Model部分包含了视图渲染所需的数据，View部分表示渲染的视图（可以是视图名，也可以是具体的View对象）。
 
 ### （5）ViewResolver
-- **作用**：==根据Controller返回的视图名称，解析出实际要渲染的View对象==。
+- **作用**：根据Controller返回的视图名称，解析出实际要渲染的View对象。
 - **实例**：有多种实现，如`InternalResourceViewResolver`可以将视图名称解析为JSP页面的路径。
 
 
 
 ## 2.执行流程
 
-![image-20240315093319263](D:\笔记\MCA\SSM\image-20240315093319263.png)
+![image-20240315093319263](.\assets\image-20240315093319263.png)
 
 Spring MVC（Spring Web MVC）是基于Java的Spring框架的一部分，它实现了Web MVC（模型-视图-控制器）设计模式。其主要功能是简化Web应用程序的开发。下面是Spring MVC的基本工作流程：
 
@@ -279,7 +279,7 @@ public class WebConfig implements WebMvcConfigurer {
 
 这段代码的作用与上面XML配置的例子相同，定义了静态资源的映射路径和位置。
 
-后续学习在==Spring Boot==中，静态资源一般放在`/static`、`/public`、`/resources`或`/META-INF/resources`目录下。Spring Boot自动配置默认就会将这些目录下的静态资源映射到应用的根路径下，而==不需要设置静态资源的放行==。
+后续学习在Spring Boot中，静态资源一般放在`/static`、`/public`、`/resources`或`/META-INF/resources`目录下。Spring Boot自动配置默认就会将这些目录下的静态资源映射到应用的根路径下，而不需要设置静态资源的放行。
 
 # 四、RESTful
 
@@ -291,7 +291,7 @@ REST（Representational State Transfer）是一种软件架构风格，它定义
 
 ### （1）@RequestMapping注解
 
-`@RequestMapping`注解用于将HTTP请求映射到特定的处理器方法上。它可以声明在类或方法上，==定义处理请求的类型（如GET、POST等）==、请求的URL路径、请求的参数、请求头等多种维度的映射信息。
+`@RequestMapping`注解用于将HTTP请求映射到特定的处理器方法上。它可以声明在类或方法上，定义处理请求的类型（如GET、POST等）、请求的URL路径、请求的参数、请求头等多种维度的映射信息。
 
 #### 基本用法
 
@@ -405,7 +405,7 @@ show.html页面
 
 注意
 
-- ​    提交的参数名必须和POJO的属性名保持一致，若不一致使用==@RequestParam==
+- ​    提交的参数名必须和POJO的属性名保持一致，若不一致使用@RequestParam
 - ​    底层通过反射以及set方法给参数列表的属性赋值
 
 ```java
@@ -551,7 +551,7 @@ Tomcat中server.xml文件加上URIEncoding="utf-8"
 
 若还存在编码问题，在编译器设置中添加-Dfile.encoding=utf-8
 
-![image-20240315112610500](D:\笔记\MCA\SSM\image-20240315112610500.png)
+![image-20240315112610500](.\assets\image-20240315112610500.png)
 
 # 六、响应处理
 
@@ -658,11 +658,11 @@ public class UserController {
 
 ### （1）数据库
 
-![image-20240315142949203](D:\笔记\MCA\SSM\image-20240315142949203.png)
+![image-20240315142949203](.\assets\image-20240315142949203.png)
 
 ### （2）项目结构
 
-![image-20240315142847516](D:\笔记\MCA\SSM\image-20240315142847516.png)
+![image-20240315142847516](.\assets\image-20240315142847516.png)
 
 ### （3）导入依赖
 
@@ -1653,9 +1653,9 @@ Mapper
 
 # 九、拦截器
 
-Spring MVC的拦截器（Interceptor）==用于在请求的处理过程中的特定点进行拦截==，然后执行一些预处理和后处理操作。这对于实现跨切面的逻辑非常有用，例如日志记录、权限检查、事务处理等。拦截器可以应用于特定的URL路径模式，使得它们非常灵活和强大。
+Spring MVC的拦截器（Interceptor）用于在请求的处理过程中的特定点进行拦截，然后执行一些预处理和后处理操作。这对于实现跨切面的逻辑非常有用，例如日志记录、权限检查、事务处理等。拦截器可以应用于特定的URL路径模式，使得它们非常灵活和强大。
 
-![image-20240315163025762](D:\笔记\MCA\SSM\image-20240315163025762.png)
+![image-20240315163025762](.\assets\image-20240315163025762.png)
 
 ## 1.拦截器的工作流程
 
@@ -1711,7 +1711,7 @@ public class MyInterceptor implements HandlerInterceptor {
 
 ## 1. @ExceptionHandler
 
-`@ExceptionHandler`注解用于在控制器层处理特定异常。它可以==应用于单个控制器内的方法==，用于捕获该控制器抛出的异常，并进行处理。
+`@ExceptionHandler`注解用于在控制器层处理特定异常。它可以应用于单个控制器内的方法，用于捕获该控制器抛出的异常，并进行处理。
 
 ```java
 @Controller
