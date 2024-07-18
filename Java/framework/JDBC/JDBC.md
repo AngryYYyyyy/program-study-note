@@ -2,13 +2,23 @@
 
 ## 1.JDBC概述
 
-JDBC（Java Database Connectivity）是一个用于Java语言的数据库访问接口，它提供了一种方法，使得Java应用能够以统一的方式访问不同类型的关系数据库。
+JDBC（Java Database Connectivity）是一个用于Java语言的数据库访问接口，它提供了统一的方法，使得Java应用能够以统一的方式访问不同类型的关系数据库。
 
-JDBC的设计理念是提供一个==独立于特定数据库实现的API==，使Java应用程序可以与任何提供JDBC驱动的数据库进行交互。这意味着开发人员可以编写与数据库无关的代码，这大大增加了代码的可移植性和可重用性。
+JDBC的设计理念是提供一个独立于特定数据库实现的API，使Java应用程序可以与任何提供JDBC驱动的数据库进行交互。这意味着开发人员可以编写与数据库无关的代码，这大大增加了代码的可移植性和可重用性。
 
 ## 2.JDBC访问数据库的过程
 
 ### （1）导入JDBC依赖
+
+Spring Boot 2.7.8 中 mysql-connector-java 不再由依赖管理来管理。
+
+```xml
+<dependency>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+            <version>8.3.0</version>
+        </dependency>
+```
 
 ### （2）加载和注册JDBC驱动
 在Java程序中，你需要加载JDBC驱动，以便与数据库建立连接。
@@ -110,8 +120,6 @@ while (rs.next()) {
     String columnData = rs.getString("column_name");
     // 处理数据
 }
-rs.close();//使用完 ResultSet 后，应该显式地关闭它，以释放数据库资源。
-stmt.close();
 ```
 
 #### DML
@@ -383,7 +391,7 @@ public class Test {
 
 当我们测试时发现：
 
-![image-20240617210608475](D:\note\数据库\JDBC\assets\image-20240617210608475.png)
+![image-20240617210608475](.\assets\image-20240617210608475.png)
 
 如果输入了精心设计的用户名密码后，即使是错误的，也能登录成功。让登录功能形同虚设。这是为什么呢，这就是SQL注入风险，原因在于SQL语句是字符串拼接的。SQL语句中拼接的内容破坏了SQL语句原有的判断逻辑。
 
@@ -476,7 +484,7 @@ public class Test01 {
 
 ### （1）MySQL执行流程
 
-![image-20240617211133018](D:\note\数据库\JDBC\assets\image-20240617211133018.png)
+![image-20240617211133018](.\assets\image-20240617211133018.png)
 
 - 连接处理和安全验证：当客户端尝试连接到MySQL服务器时，MySQL首先处理连接请求，建立一个连接。在这个阶段，MySQL会进行用户认证，验证尝试连接的用户是否有权限访问数据库。如果认证失败，连接会被拒绝。
 
@@ -1010,7 +1018,7 @@ JDBC API是一个用于Java应用程序与数据库之间交互的API。它提�
 
 # 六、DAO
 
-DAO（Data Access Object）是一种设计模式，==用于抽象和封装对数据源的所有访问==。在Java编程中，DAO是一种常见的实践，用于分离应用程序的业务逻辑和数据访问逻辑。这种模式允许应用程序通过DAO接口与数据源交互，而不是直接与数据源交互，从而提高了代码的可维护性和可重用性。
+DAO（Data Access Object）是一种设计模式，用于抽象和封装对数据源的所有访问。在Java编程中，DAO是一种常见的实践，用于分离应用程序的业务逻辑和数据访问逻辑。这种模式允许应用程序通过DAO接口与数据源交互，而不是直接与数据源交互，从而提高了代码的可维护性和可重用性。
 
 ## 1.DAO模式的组成
 

@@ -1348,5 +1348,3 @@ public class GeneratorSqlmap {
 
 
 
-
-
