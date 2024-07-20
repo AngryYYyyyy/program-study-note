@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxy.mapper.EmpMapper">
+
+    <resultMap id="BaseResultMap" type="com.lxy.entity.Emp">
+            <id property="empno" column="empno" jdbcType="INTEGER"/>
+            <result property="ename" column="ename" jdbcType="VARCHAR"/>
+            <result property="job" column="job" jdbcType="VARCHAR"/>
+            <result property="mgr" column="mgr" jdbcType="INTEGER"/>
+            <result property="hiredate" column="hiredate" jdbcType="DATE"/>
+            <result property="sal" column="sal" jdbcType="FLOAT"/>
+            <result property="comm" column="comm" jdbcType="FLOAT"/>
+            <result property="deptno" column="deptno" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <select id="listEmp" resultType="emp" >
+        select * from emp
+    </select>
+</mapper>

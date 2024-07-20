@@ -1,44 +1,31 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
-
+    <!--导入外部配置属性-->
     <properties resource="db.properties"></properties>
     <settings>
-        <!-- 打印查询语句 -->
-        <setting name="logImpl" value="STDOUT_LOGGING" />
-        <!-- 控制全局缓存（二级缓存），默认 true-->
-        <setting name="cacheEnabled" value="false"/>
-        <!-- 延迟加载的全局开关。当开启时，所有关联对象都会延迟加载。默认 false  -->
-        <setting name="lazyLoadingEnabled" value="true"/>
-        <!-- 当开启时，任何方法的调用都会加载该对象的所有属性。默认 false，可通过select标签的 fetchType来覆盖-->
-        <setting name="aggressiveLazyLoading" value="true"/>
-        <!--  Mybatis 创建具有延迟加载能力的对象所用到的代理工具，默认JAVASSIST -->
-        <!--<setting name="proxyFactory" value="CGLIB" />-->
-        <!-- STATEMENT级别的缓存，使一级缓存，只针对当前执行的这一statement有效 -->
-        <!--
-                <setting name="localCacheScope" value="STATEMENT"/>
-        -->
-        <setting name="localCacheScope" value="SESSION"/>
+        <setting name="logImpl" value="STDOUT_LOGGING"/>
     </settings>
-
+    <!--包扫描实体类-->
     <typeAliases>
-        <typeAlias alias="user" type="com.lxy.entity.User" />
+        <package name="com.lxy.entity"/>
     </typeAliases>
-
+    <!--配置环境信息-->
     <environments default="development">
         <environment id="development">
-            <transactionManager type="JDBC"/><!-- 单独使用时配置成MANAGED没有事务 -->
+            <transactionManager type="JDBC"/>
             <dataSource type="POOLED">
-                <property name="driver" value="${jdbc.driver}"/>
-                <property name="url" value="${jdbc.url}"/>
-                <property name="username" value="${jdbc.username}"/>
-                <property name="password" value="${jdbc.password}"/>
+                <property name="driver" value="${jdbc_driver}"/>
+                <property name="url" value="${jdbc_url}"/>
+                <property name="username" value="${jdbc_username}"/>
+                <property name="password" value="${jdbc_password}"/>
             </dataSource>
         </environment>
     </environments>
-
+    <!--加载mapper映射文件-->
     <mappers>
-        <mapper resource="mapper/UserMapper.xml"/>
+        <package name="com.lxy.mapper"/>
     </mappers>
-
 </configuration>

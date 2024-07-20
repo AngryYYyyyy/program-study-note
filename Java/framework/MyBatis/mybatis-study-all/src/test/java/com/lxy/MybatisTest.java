@@ -1,8 +1,9 @@
 package com.lxy;
 
 
-import com.lxy.entity.User;
-import com.lxy.mapper.UserMapper;
+import com.lxy.entity.Emp;
+import com.lxy.mapper.DeptMapper;
+import com.lxy.mapper.EmpMapper;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -10,6 +11,7 @@ import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 /**
@@ -20,11 +22,35 @@ import java.util.List;
 public class MybatisTest {
     @Test
     public void test() throws IOException {
-        SqlSessionFactory factory = new SqlSessionFactoryBuilder().build(Resources.getResourceAsStream("mybatis-config.xml"));
+        /*解析mybatis-config.xml配置文件*/
+        InputStream resource = Resources.getResourceAsStream("mybatis-config.xml");
+        /*构建SqlSession工厂*/
+        SqlSessionFactory factory = new SqlSessionFactoryBuilder().build(resource);
+        /*构建sql会话*/
         SqlSession session = factory.openSession();
-        UserMapper mapper = session.getMapper(UserMapper.class);
-        List<User> users = mapper.selectAll();
-        users.forEach(System.out::println);
+        /*执行sql*/
+        List<Emp> listEmp = session.selectList("com.lxy.mapper.EmpMapper.listEmp");
+        DeptMapper mapper = session.getMapper(DeptMapper.class);
+
+        listEmp.forEach(System.out::println);
+        /*关闭sql会话*/
+        session.close();
+    }
+    @Test
+    public void test1() throws IOException {
+        /*解析mybatis-config.xml配置文件*/
+        InputStream resource = Resources.getResourceAsStream("mybatis-config.xml");
+        /*构建SqlSession工厂*/
+        SqlSessionFactory factory = new SqlSessionFactoryBuilder().build(resource);
+        /*构建sql会话*/
+        SqlSession session = factory.openSession();
+        /*获取代理对象*/
+        EmpMapper mapper = session.getMapper(EmpMapper.class);
+        /*调用接口方法*/
+        List<Emp> listEmp = mapper.listEmp();
+        listEmp.forEach(System.out::println);
+        /*关闭sql会话*/
+        session.close();
     }
 
 }

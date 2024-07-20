@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxy.mapper.DeptMapper">
+
+    <resultMap id="BaseResultMap" type="com.lxy.entity.Dept">
+            <id property="deptno" column="deptno" jdbcType="INTEGER"/>
+            <result property="dname" column="dname" jdbcType="VARCHAR"/>
+            <result property="loc" column="loc" jdbcType="VARCHAR"/>
+    </resultMap>
+
+</mapper>
