@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: mybatis-plus-study-all
+  datasource:
+    # ?????URL
+    url: jdbc:mysql://127.0.0.1:3306/mybatisdb?useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    # ??????
+    username: root
+    # ?????
+    password: root
+    # JDBC????
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+mybatis-plus:
+  # Mapper XML????
+  mapper-locations: classpath:/mapper/**/*.xml
+  # ????????
+  type-aliases-package: com.lxy.mybatisplusstudyall.model.entity
+  configuration:
+
+    # MyBatis??????
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  configuration-properties:
+
