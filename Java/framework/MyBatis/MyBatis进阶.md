@@ -199,7 +199,7 @@ public interface UserMapper {
 }
 ```
 
-#### ② getMapper
+#### ② 测试
 
 ```java
 @Test
@@ -456,89 +456,6 @@ SQL 映射文件子元素结构如下：
 
 ### （1）动态SQL
 
-在 MyBatis 中，动态 SQL 是非常强大的功能，它允许构建灵活的 SQL 语句以应对不同的数据操作需求
-
-- `if`
-- `choose `
-- `trim `
-- `foreach`
-
-#### ① **`if`**
-`if` 元素用于在 SQL 语句中加入条件判断。根据条件是否满足，可以决定是否包含某部分 SQL 代码。这在需要根据不同的输入构建查询条件时特别有用。
-
-**示例**：
-在查询用户信息时，可以根据 `username` 是否提供来动态构建 WHERE 子句：
-
-```xml
-<select id="findUserByUsername" resultType="User">
-    SELECT * FROM users
-    <where>
-        <if test="username != null and username != ''">
-            username = #{username}
-        </if>
-    </where>
-</select>
-```
-
-#### ② **`choose`**
-`choose` 元素类似于 Java 中的 `switch` 语句，它允许从多个选项中选择一个来执行。结合 `when` 和 `otherwise` 子元素，可以根据条件选择性地构建 SQL 语句的一部分。
-
-**示例**：
-在查询订单时，可以根据不同的状态代码来动态调整查询条件：
-```xml
-<select id="findOrder" resultType="Order">
-    SELECT * FROM orders
-    <where>
-        <choose>
-            <when test="state == 'NEW'">
-                state = 'NEW'
-            </when>
-            <when test="state == 'PENDING'">
-                state = 'PENDING'
-            </when>
-            <otherwise>
-                state = 'CLOSED'
-            </otherwise>
-        </choose>
-    </where>
-</select>
-```
-
-#### ③ **`trim`**
-`trim` 元素用于动态添加或删除 SQL 语句的前缀、后缀或同时处理前后缀。这非常有用，尤其是在处理动态 `INSERT` 或 `UPDATE` 语句时，用于添加或移除逗号。
-
-**示例**：
-动态构建 UPDATE 语句，根据提供的参数决定更新哪些字段：
-
-```xml
-<update id="updateUser" parameterType="User">
-    UPDATE users
-    <set>
-        <trim suffixOverrides=",">
-            <if test="username != null">username = #{username},</if>
-            <if test="email != null">email = #{email},</if>
-        </trim>
-    </set>
-    WHERE id = #{id}
-</update>
-```
-
-#### ④ **`foreach`**
-`foreach` 元素用于遍历集合，并对每个元素执行 SQL 语句片段，常用于实现 IN 查询、批量插入和更新操作。
-
-**示例**：
-使用 IN 语句查询多个用户 ID：
-
-```xml
-<select id="findUsersByIds" resultType="User">
-    SELECT * FROM users
-    WHERE id IN
-    <foreach item="id" collection="list" open="(" separator="," close=")">
-        #{id}
-    </foreach>
-</select>
-```
-
 ### （2）批量操作
 
 ### （3）关联查询
@@ -547,9 +464,7 @@ SQL 映射文件子元素结构如下：
 
 ### （5）MBG
 
-### （6）通用Mapper
-
-### （7）MyBatis-Plus
+### （6）MyBatis-Plus
 
 # 三、MyBatis核心工作原理
 

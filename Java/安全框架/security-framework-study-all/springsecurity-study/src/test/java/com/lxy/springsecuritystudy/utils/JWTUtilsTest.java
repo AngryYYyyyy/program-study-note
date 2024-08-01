@@ -18,9 +18,9 @@ class JWTUtilsTest {
     @Test
     @WithMockUser(username="admin", roles={"ADMIN"})
     void jwt() {
-        String token = JWTUtils.createToken();
+        String token = JWTUtils.createToken("Angryyyyy",1000000);
         System.out.println(token);
-        Claims parse = JWTUtils.parse(token);
+        Claims parse = JWTUtils.parseToken(token);
         System.out.println(parse);
     }
 }

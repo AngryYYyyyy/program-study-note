@@ -1,4 +1,4 @@
-package com.lxy.mapper;
+package com.lxy.example.mapper;
 
 /**
 * @author AngryYY

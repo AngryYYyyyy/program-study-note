@@ -1,4 +1,4 @@
-package com.lxy.example.entity;
+package com.lxy.example.model.entity;
 
 import java.io.Serializable;
 import lombok.Data;

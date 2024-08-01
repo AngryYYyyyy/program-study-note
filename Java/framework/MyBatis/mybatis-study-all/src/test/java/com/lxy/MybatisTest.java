@@ -1,15 +1,14 @@
 package com.lxy;
 
 
-import com.lxy.entity.Emp;
-import com.lxy.mapper.DeptMapper;
-import com.lxy.mapper.EmpMapper;
+import com.lxy.example.mapper.DeptMapper;
+import com.lxy.example.mapper.EmpMapper;
+import com.lxy.example.model.entity.Emp;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.junit.Test;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -29,7 +28,7 @@ public class MybatisTest {
         /*构建sql会话*/
         SqlSession session = factory.openSession();
         /*执行sql*/
-        List<Emp> listEmp = session.selectList("com.lxy.mapper.EmpMapper.listEmp");
+        List<Emp> listEmp = session.selectList("com.lxy.example.mapper.EmpMapper.listEmp");
         DeptMapper mapper = session.getMapper(DeptMapper.class);
 
         listEmp.forEach(System.out::println);

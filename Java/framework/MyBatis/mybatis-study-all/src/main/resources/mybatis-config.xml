@@ -10,7 +10,7 @@
     </settings>
     <!--包扫描实体类-->
     <typeAliases>
-        <package name="com.lxy.entity"/>
+        <package name="com.lxy.example.model.entity"/>
     </typeAliases>
     <!--配置环境信息-->
     <environments default="development">
@@ -26,6 +26,6 @@
     </environments>
     <!--加载mapper映射文件-->
     <mappers>
-        <package name="com.lxy.mapper"/>
+        <package name="com.lxy.example.mapper"/>
     </mappers>
 </configuration>

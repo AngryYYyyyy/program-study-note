@@ -1,9 +1,6 @@
-package com.lxy.mapper;
+package com.lxy.example.mapper;
 
-import com.lxy.entity.Emp;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
-
+import com.lxy.example.model.entity.Emp;
 import java.util.List;
 
 /**

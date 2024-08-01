@@ -4,8 +4,8 @@ Spring 框架是一个开源的、轻量级的、综合性的框架，最初由 
 
 ## 1.核心特点
 
-- **轻量级**：Spring 是一个轻量级的框架，它通过==控制反转（IoC）==和==依赖注入（DI）==减少了对程序代码的侵入。
-- **面向切面的编程（AOP）**：Spring ==支持面向切面的编程==，允许定义方法拦截器和切点来解耦代码中的交叉关注点。
+- **轻量级**：Spring 是一个轻量级的框架，它通过控制反转（IoC）和依赖注入（DI）减少了对程序代码的侵入。
+- **面向切面的编程（AOP）**：Spring 支持面向切面的编程，允许定义方法拦截器和切点来解耦代码中的交叉关注点。
 - **事务管理**：Spring 提供了一致的事务管理接口，可以管理 Java 应用中的事务。
 - **集成**：Spring 可以轻松集成其他 Java 框架，如 MyBatis、Quartz、JMS 等。
 
@@ -152,7 +152,7 @@ public Object getBean(String name) {
 
 ## 2.多种xml注入方法
 
-### （1）设置器
+### （1）Setter
 
 ```xml
 <bean id="user" class="com.lxy.User">
@@ -162,7 +162,7 @@ public Object getBean(String name) {
 </bean>
 ```
 
-### （2）构造器
+### （2）Constructor
 
 ```xml
 <bean id="user" class="com.lxy.User">
@@ -440,7 +440,7 @@ public class UserDaoImpl implements UserDao {
 </beans>
 ```
 
-### （3）==完全注解配置==
+### （3）完全注解配置
 
 ```java
 @ComponentScan(basePackages = "com.lxy")//包扫描
@@ -1117,7 +1117,6 @@ public class BatchExample {
     </bean>
     <!--开启事务注解-->
     <tx:annotation-driven transaction-manager="transactionManager"/>
-
 ```
 
 将需要事务管理的服务添加注解

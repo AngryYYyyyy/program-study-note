@@ -2,55 +2,50 @@ package com.lxy.springsecuritystudy.utils;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.SignatureAlgorithm;
-import javax.crypto.spec.SecretKeySpec;
-import java.security.Key;
 import java.util.Date;
 
 /**
- * JWT工具类，用于处理JWT（JSON Web Token）的生成和解析。
- *
- * @author 作者：AngryYYYYYY
- * @version 1.0
- * @since 创建时间：2024年7月23日00:24
+ * JWT工具类，用于生成和解析JSON Web Tokens（JWT）。
+ * 本类提供了根据指定用户名和过期时间生成JWT令牌的方法，
+ * 以及解析令牌以提取信息的方法。
  */
 public class JWTUtils {
-    public static final String secretString = "lxy";
-    public static Key getSecretKey() {
-        return new SecretKeySpec(secretString.getBytes(), "HmacSHA1");
+
+    // 用于签名JWT令牌的密钥。请将"your_secret_key"替换为一个强大的、私有的密钥。
+    private static final String SECRET_KEY = "your_secret_key";
+
+    /**
+     * 生成JWT令牌。
+     * @param username 用户名，通常是用户的唯一标识。
+     * @param expirationMillis 令牌过期时间，以毫秒为单位。
+     * @return 生成的JWT令牌字符串。
+     */
+    public static String createToken(String username, long expirationMillis) {
+        long nowMillis = System.currentTimeMillis();
+        Date now = new Date(nowMillis);
+
+
+        return Jwts.builder()
+                .setSubject(username) // 设置主题，即令牌的所有者。
+                .setIssuedAt(now)     // 设置令牌的签发时间。
+                .setExpiration(new Date(nowMillis + expirationMillis)) // 设置令牌的过期时间。
+                .signWith(SignatureAlgorithm.HS256, SECRET_KEY) // 使用HS256算法和密钥进行签名。
+
+                .compact();
     }
 
     /**
-     * 创建并返回一个带有预定义声明的JWT令牌。
-     *
-     * @return 签名后的JWT令牌字符串
+     * 解析JWT令牌。
+     * @param token 要解析的JWT令牌字符串。
+     * @return Claims对象，包含令牌中的声明信息。
+     * @throws io.jsonwebtoken.JwtException 如果令牌无效或解析过程中出现问题。
      */
-    public static String createToken() {
-        Date expTime = new Date(System.currentTimeMillis() + 3600 * 1000);  // 令牌过期时间，从现在开始1小时后
-
-        JwtBuilder builder = Jwts.builder()
-                .setId("9527")  // 设置唯一标识
-                .setSubject("demo")  // 设置主题
-                .setIssuedAt(new Date())  // 设置签发时间
-                .setExpiration(expTime)  // 设置过期时间
-                .claim("role", "admin")  // 自定义声明
-                .signWith(SignatureAlgorithm.HS256, getSecretKey());  // 设置签名使用HS256算法，并设置密钥
-        // 将JWT压缩为字符串形式
-        builder.compressWith()
-        return builder.compact();
-    }
-
-    /**
-     * 解析JWT令牌，并打印声明信息。
-     *
-     * @param token 要解析的JWT令牌字符串
-     */
-    public static Claims parse(String token) {
-            Claims claims = Jwts.parser()
-                    .setSigningKey(getSecretKey())  // 设置解析时使用的密钥
-                    .parseClaimsJws(token)
-                    .getBody();
-            return claims;
+    public static Claims parseToken(String token) {
+        return Jwts.parser()
+                .setSigningKey(SECRET_KEY) // 设置用于解析JWT的签名密钥。
+                .parseClaimsJws(token)    // 解析传入的令牌。
+                .getBody();
     }
 }
+
