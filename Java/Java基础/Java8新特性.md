@@ -39,8 +39,8 @@ public class Test01 {
 
 注意：
 
-- 参数列表的类型可以省略，==只有一个参数时，可以省略`()`==。
-- ==方法体只有一行时，可以省略`return`、`{}`、`;`==。
+- 参数列表的类型可以省略，只有一个参数时，可以省略`()`。
+- 方法体只有一行时，可以省略`return`、`{}`、`;`。
 
 例如：
 
@@ -98,7 +98,7 @@ public class Test03 {
 
 > Lambda表达式只适用于只声明一个抽象方法的接口
 
-`@FunctionalInterface`起标识作用，该注解修饰的接口只能声明一个抽象方法。
+`@FunctionalInterface` 是 Java 中的一个注解，用于标记一个接口为函数式接口。函数式接口是指仅包含一个抽象方法的接口，可以有多个默认方法或静态方法。它们通常用于 lambda 表达式和方法引用的目标类型。
 
 ```java
 @FunctionalInterface
@@ -122,8 +122,6 @@ public class Test01 {
     }
 }
 ```
-
-![image-20231114121131479](C:\Users\40500\AppData\Roaming\Typora\typora-user-images\image-20231114121131479.png)
 
 在运行`Test01`时，会产生两个字节码文件，`Test01.class`存储的是该类的字节码信息。那么`Test01$1.class`存储的是什么呢？
 
@@ -782,7 +780,7 @@ public void test09(){
 
 ```java
 Optional<T> findFirst();
-Optional<T> findAny();
+Optional<T> findAny();//findAny() 在并行流中不保证返回第一个元素，而是返回任意一个元素。
 ```
 
 ```java
@@ -819,11 +817,21 @@ public void test11(){
 对流中的元素==进行重复的合并操作==，最终得到一个值。它是一个终端操作，通常用于数值计算，如求和、求乘积等。
 
 ```java
+   /* 
+     * @param identity   初始值，或称作“累积器的默认值”。在流为空时，它也是结果的默认值。
+     * @param accumulator 一个用于将两个元素结合起来的函数，参数为同类型 T，返回值也是同类型 T。
+     * @return 返回一个 T 类型的值，它是通过将流中的元素逐一应用 accumulator 函数，结合 identity 值，计算出来的结果。
+     */
 T reduce(T identity, BinaryOperator<T> accumulator);
 
 Optional<T> reduce(BinaryOperator<T> accumulator);
-
-<U> U reduce(U identity,//reduce 方法有三个参数：初始值、累加器和组合器。
+ /**
+     * @param identity    初始值，或称作“累积器的默认值”。在流为空时，它也是结果的默认值。
+     * @param accumulator 一个用于将元素和累积值结合起来的函数，参数为 U（累积值的类型）和 T（流中元素的类型），返回值为 U。
+     * @param combiner    一个用于在并行处理时合并部分结果的函数，参数和返回值都为 U。
+     * @return 返回一个 U 类型的值，它是通过将流中的元素逐一应用 accumulator 函数，结合 identity 值，计算出来的结果。如果流是并行的，combiner 函数会被用来合并部分结果。
+     */
+<U> U reduce(U identity,
              BiFunction<U, ? super T, U> accumulator,
              BinaryOperator<U> combiner);
 ```

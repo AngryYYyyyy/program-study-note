@@ -630,7 +630,7 @@ public class MyAspect {
 
 在Spring AOP中，`execution`是最常用的==切点表达式==（pointcut expression），用于匹配方法执行的连接点。它能够根据方法的签名指定哪些方法应当被拦截。通过使用`execution`表达式，可以精确控制通知（advice）的织入点，实现在特定方法的执行前、执行后、抛出异常后等不同时间点织入不同的行为。
 
-`execution`表达式的==一般语法==为：
+`execution`表达式的一般语法为：
 
 ```xml
 execution(modifiers-pattern? ret-type-pattern declaring-type-pattern?name-pattern(param-pattern)throws-pattern?)

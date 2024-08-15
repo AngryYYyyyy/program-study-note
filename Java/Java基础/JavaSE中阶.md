@@ -1570,7 +1570,158 @@ public class Test3 {
 }
 ```
 
-### （2）`Random`类
+### （2）常用方法
+
+`Math` 类是 Java 中用于进行各种数学运算的一个工具类。它提供了大量的静态方法来进行数学计算，包括基本的算术运算、三角函数、指数和对数函数、舍入函数等。以下是 `Math` 类的一些常用方法及其说明：
+
+#### 基本算术运算
+
+- **`Math.abs(int a)`** / **`Math.abs(double a)`**：返回参数的绝对值。
+  ```java
+  int absValue = Math.abs(-5); // 结果为 5
+  double absDouble = Math.abs(-3.14); // 结果为 3.14
+  ```
+
+- **`Math.max(int a, int b)`** / **`Math.max(double a, double b)`**：返回两个值中的较大值。
+  
+  ```java
+  int maxValue = Math.max(3, 7); // 结果为 7
+  double maxDouble = Math.max(3.5, 2.1); // 结果为 3.5
+  ```
+  
+- **`Math.min(int a, int b)`** / **`Math.min(double a, double b)`**：返回两个值中的较小值。
+  
+  ```java
+  int minValue = Math.min(3, 7); // 结果为 3
+  double minDouble = Math.min(3.5, 2.1); // 结果为 2.1
+  ```
+  
+- **`Math.sqrt(double a)`**：返回参数的平方根。
+  
+  ```java
+  double sqrtValue = Math.sqrt(16); // 结果为 4.0
+  ```
+  
+- **`Math.pow(double a, double b)`**：返回第一个参数的第二个参数次幂（即 a^b）。
+  
+  ```java
+  double powerValue = Math.pow(2, 3); // 结果为 8.0
+  ```
+  
+- **`Math.cbrt(double a)`**：返回参数的立方根。
+  
+  ```java
+  double cbrtValue = Math.cbrt(27); // 结果为 3.0
+  ```
+
+#### 舍入与取整
+
+- **`Math.round(float a)`** / **`Math.round(double a)`**：返回四舍五入的整数值。
+  ```java
+  long roundedValue = Math.round(3.5); // 结果为 4
+  ```
+
+- **`Math.ceil(double a)`**：返回大于或等于参数的最小整数值（向上取整）。
+  
+  ```java
+  double ceilValue = Math.ceil(3.1); // 结果为 4.0
+  ```
+  
+- **`Math.floor(double a)`**：返回小于或等于参数的最大整数值（向下取整）。
+  
+  ```java
+  double floorValue = Math.floor(3.9); // 结果为 3.0
+  ```
+
+####  三角函数
+
+- **`Math.sin(double a)`**：返回指定角度（以弧度为单位）的正弦值。
+  ```java
+  double sinValue = Math.sin(Math.PI / 2); // 结果为 1.0
+  ```
+
+- **`Math.cos(double a)`**：返回指定角度（以弧度为单位）的余弦值。
+  ```java
+  double cosValue = Math.cos(0); // 结果为 1.0
+  ```
+
+- **`Math.tan(double a)`**：返回指定角度（以弧度为单位）的正切值。
+  ```java
+  double tanValue = Math.tan(Math.PI / 4); // 结果为 1.0
+  ```
+
+- **`Math.asin(double a)`**：返回指定数值的反正弦值，以弧度为单位。
+  ```java
+  double asinValue = Math.asin(1.0); // 结果为 π/2
+  ```
+
+- **`Math.acos(double a)`**：返回指定数值的反余弦值，以弧度为单位。
+  ```java
+  double acosValue = Math.acos(1.0); // 结果为 0.0
+  ```
+
+- **`Math.atan(double a)`**：返回指定数值的反正切值，以弧度为单位。
+  ```java
+  double atanValue = Math.atan(1.0); // 结果为 π/4
+  ```
+
+- **`Math.toRadians(double angdeg)`**：将角度转换为弧度。
+  ```java
+  double radians = Math.toRadians(180); // 结果为 π
+  ```
+
+- **`Math.toDegrees(double angrad)`**：将弧度转换为角度。
+  ```java
+  double degrees = Math.toDegrees(Math.PI); // 结果为 180.0
+  ```
+
+####  指数与对数
+
+- **`Math.exp(double a)`**：返回欧拉数 e 的 a 次幂。
+  ```java
+  double expValue = Math.exp(1); // 结果为 2.718281828459045
+  ```
+
+- **`Math.log(double a)`**：返回参数的自然对数（以 e 为底）。
+  ```java
+  double logValue = Math.log(Math.E); // 结果为 1.0
+  ```
+
+- **`Math.log10(double a)`**：返回参数的以 10 为底的对数。
+  ```java
+  double log10Value = Math.log10(100); // 结果为 2.0
+  ```
+
+#### 随机数生成
+
+- **`Math.random()`**：返回一个 `0.0`（包括）到 `1.0`（不包括）之间的随机数。
+  ```java
+  double randomValue = Math.random(); // 例如 0.732645
+  ```
+
+#### 6其他常用方法
+
+- **`Math.signum(double a)`**：返回数字的符号函数值。如果参数为正数，返回 `1.0`；如果参数为负数，返回 `-1.0`；如果参数为 `0`，返回 `0.0`。
+  ```java
+  double signumValue = Math.signum(-5.5); // 结果为 -1.0
+  ```
+
+- **`Math.hypot(double x, double y)`**：返回 sqrt(x^2 + y^2)，即直角三角形的斜边长度。
+  ```java
+  double hypotValue = Math.hypot(3, 4); // 结果为 5.0
+  ```
+
+- **`Math.copySign(double magnitude, double sign)`**：返回具有 `magnitude` 大小且带有 `sign` 符号的值。
+  ```java
+  double copySignValue = Math.copySign(3.0, -1.0); // 结果为 -3.0
+  ```
+
+- **`Math.IEEEremainder(double f1, double f2)`**：返回根据 IEEE 754 标准计算的浮点数余数。
+  ```java
+  double ieeeRemainder = Math.IEEEremainder(5.5, 2.0); // 结果为 1.5
+  ```
+
+### （3）`Random`类
 
 ```java
 public class Test4 {
@@ -1668,27 +1819,155 @@ public final class String//final修饰，不能被继承
 
 ### （2）常用方法
 
-```java
-public class Test5 {
-    public static void main(String[] args) {
-        String s1=new String("abcdefg888");
-        System.out.println(s1.substring(1, s1.length() - 1));//输出：bcdefg88，子字符串范围[)
-        System.out.println(s1.toUpperCase());//输出：ABCDEFG888，转换大写
-        System.out.println(s1.charAt(0));//索引
-        System.out.println(s1.charAt(1));
-        System.out.println(s1.charAt(2));
-        System.out.println(s1.concat("1234"));//输出：abcdefg8881234，拼接字符串
-        System.out.println(s1.replace('8', '0'));//输出：abcdefg000，替换字符
-        String s2="1,2,3,4,5,6";
-        String[] strs = s2.split(",");//切分字符串，返回一个字符串类型的数组
-        for(String e:strs){
-            System.out.print(e+"\t");//1	2	3	4	5	6	abc
-        }
-        String s3="         abc       ";
-        System.out.println(s3.trim());//输出：abc，去除首位空格
-    }
-}
-```
+`String` 类是 Java 中用于表示字符串的一个不可变类。它提供了许多方法来操作和处理字符串。以下是 `String` 类的一些常用方法及其说明：
+
+#### 基本字符串操作
+
+- **`length()`**：返回字符串的长度（字符的个数）。
+  ```java
+  String str = "Hello";
+  int len = str.length(); // 结果为 5
+  ```
+
+- **`charAt(int index)`**：返回字符串中指定索引处的字符。索引从 0 开始。
+  ```java
+  char ch = str.charAt(1); // 结果为 'e'
+  ```
+
+- **`substring(int beginIndex)`** / **`substring(int beginIndex, int endIndex)`**：返回从指定索引开始或在指定范围内的子字符串。
+  ```java
+  String substr1 = str.substring(1); // 结果为 "ello"
+  String substr2 = str.substring(1, 4); // 结果为 "ell"
+  ```
+
+- **`concat(String str)`**：将指定的字符串连接到当前字符串的末尾。
+  ```java
+  String newStr = str.concat(" World"); // 结果为 "Hello World"
+  ```
+
+- **`replace(char oldChar, char newChar)`** / **`replace(CharSequence target, CharSequence replacement)`**：替换字符串中所有出现的指定字符或字符序列。
+  ```java
+  String replacedStr = str.replace('l', 'p'); // 结果为 "Heppo"
+  String replacedSeq = str.replace("ll", "yy"); // 结果为 "Heyyo"
+  ```
+
+- **`trim()`**：去除字符串两端的空白字符。
+  ```java
+  String trimmedStr = "  Hello  ".trim(); // 结果为 "Hello"
+  ```
+
+#### 字符串比较
+
+- **`equals(Object anObject)`**：比较两个字符串的内容是否相等。
+  ```java
+  boolean isEqual = str.equals("Hello"); // 结果为 true
+  ```
+
+- **`equalsIgnoreCase(String anotherString)`**：比较两个字符串的内容是否相等，忽略大小写。
+  
+  ```java
+  boolean isEqualIgnoreCase = str.equalsIgnoreCase("hello"); // 结果为 true
+  ```
+  
+- **`compareTo(String anotherString)`**：按字典顺序比较两个字符串。返回值小于 0，表示当前字符串小于另一个字符串；返回值为 0，表示相等；返回值大于 0，表示当前字符串大于另一个字符串。
+  
+  ```java
+  int comparison = str.compareTo("World"); // 结果为负值
+  ```
+  
+- **`compareToIgnoreCase(String str)`**：按字典顺序比较两个字符串，忽略大小写。
+  ```java
+  int comparisonIgnoreCase = str.compareToIgnoreCase("world"); // 结果为负值
+  ```
+
+####  查找字符串
+
+- **`indexOf(int ch)`** / **`indexOf(String str)`**：返回指定字符或子字符串在当前字符串中第一次出现的位置。找不到则返回 -1。
+  ```java
+  int index1 = str.indexOf('l'); // 结果为 2
+  int index2 = str.indexOf("lo"); // 结果为 3
+  ```
+
+- **`lastIndexOf(int ch)`** / **`lastIndexOf(String str)`**：返回指定字符或子字符串在当前字符串中最后一次出现的位置。找不到则返回 -1。
+  ```java
+  int lastIndex = str.lastIndexOf('l'); // 结果为 3
+  ```
+
+- **`contains(CharSequence s)`**：判断当前字符串是否包含指定的字符序列。
+  ```java
+  boolean contains = str.contains("ell"); // 结果为 true
+  ```
+
+- **`startsWith(String prefix)`** / **`endsWith(String suffix)`**：判断当前字符串是否以指定的前缀或后缀开头或结尾。
+  ```java
+  boolean startsWith = str.startsWith("He"); // 结果为 true
+  boolean endsWith = str.endsWith("lo"); // 结果为 true
+  ```
+
+#### 字符串转换
+
+- **`toLowerCase()`** / **`toUpperCase()`**：将字符串转换为小写或大写。
+  ```java
+  String lowerStr = str.toLowerCase(); // 结果为 "hello"
+  String upperStr = str.toUpperCase(); // 结果为 "HELLO"
+  ```
+
+- **`valueOf(primitive type or object)`**：将基本数据类型或对象转换为字符串。
+  ```java
+  String intStr = String.valueOf(123); // 结果为 "123"
+  String boolStr = String.valueOf(true); // 结果为 "true"
+  ```
+
+- **`split(String regex)`** / **`split(String regex, int limit)`**：根据指定的正则表达式将字符串分割为数组。
+  
+  ```java
+  String[] words = "Hello World".split(" "); // 结果为 ["Hello", "World"]
+  String[] limitedSplit = "a,b,c,d".split(",", 2); // 结果为 ["a", "b,c,d"]
+  ```
+  
+- **`join(CharSequence delimiter, CharSequence... elements)`**：将多个字符序列使用指定的分隔符连接为一个字符串。
+  
+  ```java
+  String joinedStr = String.join("-", "a", "b", "c"); // 结果为 "a-b-c"
+  ```
+
+#### 字符串的空和空白检查
+
+- **`isEmpty()`**：判断字符串是否为空（长度为 0）。
+  ```java
+  boolean isEmpty = str.isEmpty(); // 结果为 false
+  ```
+
+- **`isBlank()`**：判断字符串是否为空白（长度为 0 或仅包含空白字符）。此方法在 Java 11 中引入。
+  
+  ```java
+  boolean isBlank = "   ".isBlank(); // 结果为 true
+  ```
+
+#### 其他常用方法
+
+- **`matches(String regex)`**：判断字符串是否匹配指定的正则表达式。
+  ```java
+  boolean matches = str.matches("\\w+"); // 结果为 true（如果 str 仅包含字母或数字）
+  ```
+
+- **`intern()`**：返回字符串对象的规范表示形式，基于字符串池的管理。
+  ```java
+  String internedStr = str.intern();
+  ```
+
+- **`format(String format, Object... args)`**：使用指定的格式字符串和参数生成格式化的字符串。
+  ```java
+  String formattedStr = String.format("Name: %s, Age: %d", "John", 25); // 结果为 "Name: John, Age: 25"
+  ```
+
+- **`getBytes()`** / **`getBytes(Charset charset)`**：将字符串转换为字节数组，使用默认或指定的字符集。
+  ```java
+  byte[] bytes = str.getBytes(); // 使用默认字符集
+  byte[] utf8Bytes = str.getBytes(StandardCharsets.UTF_8); // 使用 UTF-8 字符集
+  ```
+
+这些方法为处理和操作字符串提供了多种功能，广泛应用于 Java 开发中。
 
 ### （3）内存分析
 
@@ -1754,7 +2033,6 @@ abstract class AbstractStringBuilder implements Appendable, CharSequence {
     AbstractStringBuilder(int capacity) {
         value = new char[capacity];//设置数组长度
     }
-
 ```
 
 #### ② 数组的扩容
@@ -1787,6 +2065,138 @@ public class Test7 {
 #### ⑤`StringBuffer`类
 
 JDK1.5新增，相比`StringBuilder`类效率低，但线程安全
+
+## 5.`Arrays`类
+
+`Arrays` 是 Java 中的一个工具类，提供了许多静态方法，用于操作和处理数组。以下是 `Arrays` 类的一些常用方法及其说明：
+
+### （1）数组排序
+
+- **`sort(int[] a)`** / **`sort(T[] a)`**：对指定的数组进行升序排序，适用于基本数据类型数组和对象数组。
+  ```java
+  int[] arr = {3, 1, 2};
+  Arrays.sort(arr); // 结果为 [1, 2, 3]
+  ```
+
+- **`sort(T[] a, Comparator<? super T> c)`**：使用指定的比较器对对象数组进行排序。
+  ```java
+  String[] strs = {"banana", "apple", "cherry"};
+  Arrays.sort(strs, Comparator.reverseOrder()); // 结果为 ["cherry", "banana", "apple"]
+  ```
+
+- **`parallelSort(int[] a)`** / **`parallelSort(T[] a)`**：并行地对数组进行排序，通常比常规的 `sort()` 方法更快，尤其是对大型数组。
+  ```java
+  Arrays.parallelSort(arr); // 对 arr 进行并行排序
+  ```
+
+### （2）数组搜索
+
+- **`binarySearch(int[] a, int key)`** / **`binarySearch(T[] a, T key)`**：使用二分搜索法在已排序的数组中搜索指定的值，返回值的索引。如果找不到，则返回负数。
+  ```java
+  int index = Arrays.binarySearch(arr, 2); // 结果为 1
+  ```
+
+- **`binarySearch(T[] a, T key, Comparator<? super T> c)`**：使用指定的比较器在已排序的对象数组中搜索指定的值。
+  
+  ```java
+  int indexStr = Arrays.binarySearch(strs, "apple", Comparator.reverseOrder()); // 结果为 2
+  ```
+
+### （3）数组比较
+
+- **`equals(int[] a, int[] a2)`** / **`equals(Object[] a, Object[] a2)`**：判断两个数组是否相等（长度相同且对应元素相等）。
+  ```java
+  int[] arr1 = {1, 2, 3};
+  int[] arr2 = {1, 2, 3};
+  boolean isEqual = Arrays.equals(arr1, arr2); // 结果为 true
+  ```
+
+- **`deepEquals(Object[] a1, Object[] a2)`**：深度比较两个数组，适用于嵌套数组。
+  ```java
+  Integer[][] nestedArr1 = {{1, 2}, {3, 4}};
+  Integer[][] nestedArr2 = {{1, 2}, {3, 4}};
+  boolean isDeepEqual = Arrays.deepEquals(nestedArr1, nestedArr2); // 结果为 true
+  ```
+
+### （4）数组填充
+
+- **`fill(int[] a, int val)`** / **`fill(T[] a, T val)`**：将数组中的每个元素替换为指定的值。
+  ```java
+  Arrays.fill(arr, 0); // 结果为 [0, 0, 0]
+  ```
+
+- **`fill(int[] a, int fromIndex, int toIndex, int val)`**：用指定的值填充数组中从 `fromIndex` 到 `toIndex` 范围内的元素。
+  ```java
+  Arrays.fill(arr, 1, 3, 9); // 结果为 [0, 9, 9]
+  ```
+
+### （5）数组转换与字符串表示
+
+- **`toString(int[] a)`** / **`toString(T[] a)`**：返回数组的字符串表示形式。
+  ```java
+  String arrStr = Arrays.toString(arr); // 结果为 "[0, 9, 9]"
+  ```
+
+- **`deepToString(Object[] a)`**：返回多维数组的字符串表示形式。
+  ```java
+  String nestedArrStr = Arrays.deepToString(nestedArr1); // 结果为 "[[1, 2], [3, 4]]"
+  ```
+
+### （6）数组拷贝
+
+- **`copyOf(int[] original, int newLength)`** / **`copyOf(T[] original, int newLength)`**：将原数组的前 `newLength` 个元素复制到一个新的数组中，长度不足时用默认值填充。
+  ```java
+  int[] newArr = Arrays.copyOf(arr, 5); // 结果为 [0, 9, 9, 0, 0]
+  ```
+
+- **`copyOfRange(int[] original, int from, int to)`** / **`copyOfRange(T[] original, int from, int to)`**：将原数组中从 `from` 到 `to` 范围内的元素复制到一个新的数组中。
+  ```java
+  int[] rangeArr = Arrays.copyOfRange(arr, 1, 3); // 结果为 [9, 9]
+  ```
+
+### （7）数组填充与计算
+
+- **`setAll(T[] array, IntFunction<? extends T> generator)`**：根据指定的生成器函数为数组的每个元素赋值。
+  ```java
+  String[] strArr = new String[3];
+  Arrays.setAll(strArr, i -> "Element " + i); // 结果为 ["Element 0", "Element 1", "Element 2"]
+  ```
+
+- **`parallelSetAll(int[] array, IntUnaryOperator generator)`**：并行地为数组的每个元素赋值。
+  ```java
+  Arrays.parallelSetAll(arr, i -> i * 2); // 结果为 [0, 2, 4]
+  ```
+
+- **`stream(int[] array)`** / **`stream(T[] array)`**：将数组转换为流，以便使用 Java Stream API 进行操作。
+  ```java
+  int sum = Arrays.stream(arr).sum(); // 计算数组的元素和
+  ```
+
+### （8）数组的哈希值计算
+
+- **`hashCode(int[] a)`** / **`hashCode(Object[] a)`**：返回数组的哈希值，适用于基本数据类型和对象数组。
+  ```java
+  int hashCode = Arrays.hashCode(arr);
+  ```
+
+- **`deepHashCode(Object[] a)`**：返回多维数组的深度哈希值。
+  ```java
+  int deepHashCode = Arrays.deepHashCode(nestedArr1);
+  ```
+
+### （9）多维数组的处理
+
+- **`deepHashCode(Object[] a)`**：返回多维数组的哈希值。
+  ```java
+  int deepHash = Arrays.deepHashCode(nestedArr1); // 计算嵌套数组的哈希值
+  ```
+
+- **`deepToString(Object[] a)`**：返回多维数组的字符串表示形式。
+  ```java
+  String deepStr = Arrays.deepToString(nestedArr1); // 结果为 "[[1, 2], [3, 4]]"
+  ```
+
+这些方法使 `Arrays` 类成为处理数组的一个强大工具，在日常开发中广泛使用。
 
 # 五、集合
 
@@ -2874,33 +3284,134 @@ static final class Entry<K,V> implements Map.Entry<K,V> {
 
 ## 3.`Collections`工具类
 
-简单的使用
+`Collections` 是 Java 中的一个工具类，提供了许多静态方法，用于操作或返回集合（如列表、集和映射）。以下是 `Collections` 类的一些常用方法及其说明：
 
-```java
-public class Test13 {
-    public static void main(String[] args) {
-        //addAll
-        List<String> list=new ArrayList<>();
-        Collections.addAll(list,new String[]{"dd","ee","ff"});
-        Collections.addAll(list,"aa","bb","cc");
-        System.out.println(list);// [dd, ee, ff, aa, bb, cc]
-        //sort
-        Collections.sort((List<String>)list);
-        System.out.println(list);//[aa, bb, cc, dd, ee, ff]
-        //binarySearch
-        System.out.println(Collections.binarySearch(list, "dd"));//3
-        //copy
-        List<String> list1=new ArrayList<>();
-        Collections.addAll(list1,"hello");
-        Collections.copy(list, list1);//list的长度必须大于list1
-        System.out.println(list1);//[hello]
-        System.out.println(list);//[hello, bb, cc, dd, ee, ff]
-        //fill
-        Collections.fill(list,"yyyyy");
-        System.out.println(list);//[yyyyy, yyyyy, yyyyy, yyyyy, yyyyy, yyyyy]
-    }
-}
-```
+### （1）排序与混排
+
+- **`sort(List<T> list)`**：对指定的列表进行升序排序，使用元素的自然顺序。
+  ```java
+  List<Integer> list = Arrays.asList(3, 1, 2);
+  Collections.sort(list); // 结果为 [1, 2, 3]
+  ```
+
+- **`sort(List<T> list, Comparator<? super T> c)`**：使用指定的比较器对列表进行排序。
+  ```java
+  Collections.sort(list, Comparator.reverseOrder()); // 结果为 [3, 2, 1]
+  ```
+
+- **`shuffle(List<?> list)`**：对列表中的元素进行随机排列。
+  ```java
+  Collections.shuffle(list); // 结果为随机顺序
+  ```
+
+- **`reverse(List<?> list)`**：反转列表中元素的顺序。
+  ```java
+  Collections.reverse(list); // 结果为 [3, 2, 1]
+  ```
+
+- **`swap(List<?> list, int i, int j)`**：交换列表中两个指定位置的元素。
+  ```java
+  Collections.swap(list, 0, 2); // 结果为 [3, 1, 2]
+  ```
+
+### （2）查找与替换
+
+- **`binarySearch(List<? extends Comparable<? super T>> list, T key)`**：使用二分搜索法在排序好的列表中搜索指定的元素，返回索引。列表必须是已排序的，否则结果未定义。
+  ```java
+  int index = Collections.binarySearch(list, 2); // 结果为 1
+  ```
+
+- **`max(Collection<? extends T> coll)`**：返回集合中的最大元素，使用元素的自然顺序。
+  ```java
+  int max = Collections.max(list); // 结果为 3
+  ```
+
+- **`min(Collection<? extends T> coll)`**：返回集合中的最小元素，使用元素的自然顺序。
+  
+  ```java
+  int min = Collections.min(list); // 结果为 1
+  ```
+  
+- **`replaceAll(List<T> list, T oldVal, T newVal)`**：用新的值替换列表中所有等于旧值的元素。
+  ```java
+  Collections.replaceAll(list, 1, 9); // 结果为 [9, 2, 3]
+  ```
+
+### （3）同步控制
+
+- **`synchronizedList(List<T> list)`**：返回一个线程安全的列表包装器。
+  ```java
+  List<Integer> syncList = Collections.synchronizedList(new ArrayList<>());
+  ```
+
+- **`synchronizedMap(Map<K, V> m)`**：返回一个线程安全的映射包装器。
+  ```java
+  Map<String, Integer> syncMap = Collections.synchronizedMap(new HashMap<>());
+  ```
+
+- **`synchronizedSet(Set<T> s)`**：返回一个线程安全的集合包装器。
+  ```java
+  Set<Integer> syncSet = Collections.synchronizedSet(new HashSet<>());
+  ```
+
+### （4）不可变集合
+
+- **`unmodifiableList(List<? extends T> list)`**：返回一个不可变的列表，任何修改操作都会抛出 `UnsupportedOperationException`。
+  ```java
+  List<Integer> unmodifiableList = Collections.unmodifiableList(list);
+  ```
+
+- **`unmodifiableMap(Map<? extends K, ? extends V> m)`**：返回一个不可变的映射。
+  ```java
+  Map<String, Integer> unmodifiableMap = Collections.unmodifiableMap(syncMap);
+  ```
+
+- **`unmodifiableSet(Set<? extends T> s)`**：返回一个不可变的集合。
+  ```java
+  Set<Integer> unmodifiableSet = Collections.unmodifiableSet(syncSet);
+  ```
+
+### （5）集合填充与复制
+
+- **`fill(List<? super T> list, T obj)`**：用指定的元素替换列表中的所有元素。
+  ```java
+  Collections.fill(list, 0); // 结果为 [0, 0, 0]
+  ```
+
+- **`copy(List<? super T> dest, List<? extends T> src)`**：将源列表中的所有元素复制到目标列表中，目标列表的大小必须大于或等于源列表。
+  ```java
+  List<Integer> dest = Arrays.asList(0, 0, 0);
+  Collections.copy(dest, list); // dest 结果为 [3, 2, 1]
+  ```
+
+- **`nCopies(int n, T o)`**：返回一个包含 n 个相同元素的不可变列表。
+  ```java
+  List<String> copies = Collections.nCopies(3, "A"); // 结果为 ["A", "A", "A"]
+  ```
+
+### （6） 集合生成
+
+- **`singleton(T o)`**：返回一个包含单个元素的不可变集合。
+  ```java
+  Set<String> single = Collections.singleton("A"); // 结果为 ["A"]
+  ```
+
+- **`emptyList()`** / **`emptyMap()`** / **`emptySet()`**：返回一个空的、不可变的列表、映射或集合。
+  ```java
+  List<String> emptyList = Collections.emptyList();
+  ```
+
+- **`frequency(Collection<?> c, Object o)`**：返回指定集合中某元素的出现次数。
+  ```java
+  int freq = Collections.frequency(list, 2); // 结果为 1
+  ```
+
+- **`disjoint(Collection<?> c1, Collection<?> c2)`**：判断两个集合是否没有交集。
+  ```java
+  boolean disjoint = Collections.disjoint(list, Arrays.asList(4, 5)); // 结果为 true
+  ```
+
+这些方法使得 `Collections` 类在 Java 开发中广泛应用，尤其是在处理集合框架时，提供了方便的工具来操作和处理各种集合类型。
 
 # 六、IO流
 
