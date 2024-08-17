@@ -1362,42 +1362,36 @@ public class Main {
 
 #### coding
 
-```
+```java
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class Main {
-    static int minDifference=Integer.MAX_VALUE;
-    static int totalSum=0;
+    private static int totalScore=0;
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        Integer[] scores = new Integer[10];
-
-        for (int i = 0; i < 10; i++) {
-            scores[i] = sc.nextInt();
-            totalSum+=scores[i];
+        int[] scores = Arrays.stream(sc.nextLine().split(" ")).mapToInt(Integer::parseInt).toArray();
+        int abs=assignTeams(scores);
+        System.out.println(abs);
+    }
+    private static int assignTeams(int[] scores) {
+        for(int score:scores){
+            totalScore+=score;
         }
-        group(scores);
-        System.out.println(minDifference);
+        return backtracking(scores,0,0,0,0);
     }
 
-    private static void group(Integer[] scores) {
-        process(0,scores,0,0,0);
-    }
-
-    private static void process(int i, Integer[] scores, Integer currentTeamASum,Integer currentTeamACount,Integer currentTeamBCount) {
-        if(i==scores.length){
-            if(currentTeamACount==5&&currentTeamBCount==5){
-                int difference = Math.abs(2*currentTeamASum-totalSum);
-                minDifference=Math.min(minDifference,difference);
-                return;
-            }
+    private static int backtracking(int[] scores, int i, int teamACount, int teamBCount, int teamASum) {
+        if(i==scores.length) {
+            return Math.abs(2*teamASum-totalScore);
         }
-        if(currentTeamACount<5) process(i+1,scores,currentTeamASum+scores[i],currentTeamACount+1,currentTeamBCount);
-        if(currentTeamBCount<5) process(i+1,scores,currentTeamASum,currentTeamACount,currentTeamBCount+1);
+        int abs1=Integer.MAX_VALUE;
+        int abs2=Integer.MAX_VALUE;
+        if(teamACount<5) {abs1=backtracking(scores,i+1,teamACount+1,teamBCount,teamASum+scores[i]);}
+        if(teamBCount<5) {abs2=backtracking(scores,i+1,teamACount,teamBCount+1,teamASum);}
+        return Math.min(abs1,abs2);
     }
-
 }
-
 ```
 
 # 【贪心】2024D-任务处理
@@ -1478,7 +1472,62 @@ public class Main {
         return num;
     }
 }
+```
 
+优化：
+
+```java
+import java.util.*;
+
+public class Main {
+    public static class Task {
+        int start;
+        int end;
+        public Task(int start, int end) {
+            this.start = start;
+            this.end = end;
+        }
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int N = sc.nextInt();
+        List<Task> tasks = new ArrayList<>();
+        for (int i = 0; i < N; i++) {
+            tasks.add(new Task(sc.nextInt(), sc.nextInt()));
+        }
+        int num = taskProcess(tasks);
+        System.out.println(num);
+    }
+
+    private static int taskProcess(List<Task> tasks) {
+        tasks.sort(Comparator.comparingInt(t -> t.start));
+        PriorityQueue<Task> availableTasks = new PriorityQueue<>((o1, o2) -> o1.end== o2.end?o1.start-o2.start:o1.end-o2.end);
+
+        int currentTime = 0, completedTasks = 0;
+        int i=0;
+        while (i < tasks.size()) {
+            currentTime=tasks.get(i).start;
+            while (i < tasks.size() && tasks.get(i).start <= currentTime) {
+                availableTasks.add(tasks.get(i));
+                i++;
+            }
+
+            while (!availableTasks.isEmpty()) {
+                Task task = availableTasks.poll();
+                if (task.end>=currentTime) {
+                    completedTasks++;
+                    currentTime++;
+                    while (i < tasks.size() && tasks.get(i).start <= currentTime) {
+                        availableTasks.add(tasks.get(i));
+                        i++;
+                    }
+                }
+            }
+        }
+        return completedTasks;
+    }
+}
 ```
 
 
@@ -4777,5 +4826,845 @@ public class Main {
     }
 }
 
+```
+
+# 【DFS/BFS】2024D-可以组成网络的服务器
+
+#### 题目描述
+
+在一个机房中，服务器的位置标识在 n*m 的整数矩阵网格中，1表示单元格上有服务器，0 表示没有。如果两台服务器位于同一行或者同一列中紧邻的位置，则认为它们之间可以组成一个局域网。请你统计机房中最大的局域网包含的服务器个数。
+
+#### 输入
+
+第一行输入两个正整数，n和m，0 < n,m <= 100 
+
+之后为n*m的二维数组，代表服务器信息
+
+#### 输出
+
+最大局域网包含的服务器个数。
+
+#### 样例输入 复制
+
+```plain
+2 2
+1 0
+1 1
+```
+
+#### 样例输出 复制
+
+```plain
+3
+```
+
+#### 提示
+
+[0][0]、[1][0]、[1][1]三台服务器相互连接，可以组成局域网
+
+#### coding
+
+```java
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        int m = sc.nextInt();
+        int[][] matrixNetwork=new int[n][m];
+        for(int i=0;i<n;i++){
+            for(int j=0;j<m;j++){
+                matrixNetwork[i][j]=sc.nextInt();
+            }
+        }
+        sc.close();
+        int maxLan=countMaxLan(matrixNetwork,n,m);
+        System.out.println(maxLan);
+    }
+
+    private static int countMaxLan(int[][] matrixNetwork,int n,int m) {
+        int maxCountLan=0;
+        boolean[][] visited=new boolean[n][m];
+        for(int i=0;i<n;i++){
+            for(int j=0;j<m;j++){
+                if(matrixNetwork[i][j]==1&&!visited[i][j]){
+                    int count=dfs(matrixNetwork,n,m,i,j,visited);
+                    maxCountLan=Math.max(maxCountLan,count);
+                }
+            }
+        }
+        return maxCountLan;
+    }
+
+    private static int dfs(int[][] matrixNetwork, int n,int m,int i, int j, boolean[][] visited) {
+        if(i<0||i>=n||j<0||j>=m||visited[i][j]||matrixNetwork[i][j]==0){
+            return 0;
+        }
+        int count=1;
+        visited[i][j]=true;
+        count+=dfs(matrixNetwork,n,m,i+1,j,visited);
+        count+=dfs(matrixNetwork,n,m,i-1,j,visited);
+        count+=dfs(matrixNetwork,n,m,i,j+1,visited);
+        count+=dfs(matrixNetwork,n,m,i,j-1,visited);
+        return count;
+    }
+}
+```
+
+# 【DFS/BFS】2024D-图像物体的边界
+
+#### 题目描述
+
+给定一个二维数组`M`行`N`列，二维数组里的数字代表图片的像素，为了简化问题，仅包含像素`1`和`5`两种像素，每种像素代表一个物体，`2`个物体相邻的格子为边界，求像素`1`代表的物体的边界个数。像素`1`代表的物体的边界指与像素`5`相邻的像素`1`的格子，边界相邻的属于同一个边界，相邻需要考虑8个方向(上，下，左，右，左上，左下，右上，右下)
+
+其他约束:
+
+地图规格约束为:
+
+```
+0<M<100
+0<N<100
+```
+
+1 如下图，与像素`5`的格子相邻的像素`1`的格子`(0,0)、(0,1)、(0,2)、(1,0)、(1,2)、(2,0)、(2,1)、(2,2)、(4,4)、(4,5)、(5,4)`为边界，另`(0,0)、(0,1)、(0,2)、(1,0)、(1,2)、(2,0)、(2,1)、(2,2)`相邻，为`1`个边界，`(4,4)、(4,5)、(5,4)`相邻，为`1`个边界，所以下图边界个数为`2`。
+
+![img](https://cdn.jsdelivr.net/gh/AngryYYyyyy/picture/note/202408151157841.jpeg)
+
+
+
+2 如下图，与像素`5`的格子相邻的像素`1`的格子`(0,0)、(0,1)、(0,2)、(1,0)、(1,2)、(2,0)、(2,1)、(2,2)、(3,3)、(3,4)、(3,5)、(4,3)、(4,5)、(5,3)、(5,4)、(5,5)`为边界，另这些边界相邻，所以下图边界个数为`1`。注：`(2,2)、(3,3)`相邻
+
+![img](https://cdn.jsdelivr.net/gh/AngryYYyyyy/picture/note/202408151157836.jpeg)
+
+
+
+#### 输入
+
+第一行，行数M，列数N 
+
+第二行开始，是M行N列的像素的二维数组，仅包含像素1和5
+
+#### 输出
+
+像素1代表的物体的边界个数。如果没有边界输出0（比如只存在像素1，或者只存在像素5）
+
+#### 样例输入 复制
+
+```plain
+6 6
+1 1 1 1 1 1
+1 5 1 1 1 1
+1 1 1 1 1 1
+1 1 1 1 1 1
+1 1 1 1 1 1
+1 1 1 1 1 5
+```
+
+#### 样例输出 复制
+
+```plain
+2
+```
+
+#### coding
+
+```java
+import java.util.Scanner;
+
+public class Main {
+    private static final int[]dx={-1,-1,-1,0,0,1,1,1};
+    private static final int[]dy={-1,0,1,1,-1,-1,0,1};
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        int m = sc.nextInt();
+        int[][] grid=new int[n][m];
+        for(int i=0;i<n;i++){
+            for(int j=0;j<m;j++){
+                grid[i][j]=sc.nextInt();
+            }
+        }
+        sc.close();
+        int boundaryCount=countBoundary(grid,n,m);
+        System.out.println(boundaryCount);
+    }
+
+    private static int countBoundary(int[][] grid, int n, int m) {
+        boolean[][] visited=new boolean[n][m];
+        int count=0;
+        for(int i=0;i<n;i++){
+            for(int j=0;j<m;j++){
+                if(!visited[i][j]&&grid[i][j]==1&&isBoundary(grid,i,j)){
+                    dfs(grid,i,j,visited);
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
+    private static void dfs(int[][] grid, int i, int j, boolean[][] visited) {
+        int n = grid.length;
+        int m = grid[0].length;
+        if(i<0||i>=n||j<0||j>=m||visited[i][j]||grid[i][j]!=1)  return;
+        visited[i][j]=true;
+        for(int k=0;k<8;k++){
+            int x=i+dx[k];
+            int y=j+dy[k];
+            if(isValid(x,y,n,m)&&!visited[x][y]&&grid[x][y]==1&&isBoundary(grid,x,y)){
+                dfs(grid,x,y,visited);
+            }
+        }
+    }
+
+    private static boolean isBoundary(int[][] grid, int i, int j) {
+        int n=grid.length;
+        int m=grid[0].length;
+        for(int k=0;k<8;k++){
+            int x=i+dx[k];
+            int y=j+dy[k];
+            if(isValid(x,y,n,m)&&grid[x][y]==5){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean isValid(int x, int y,int n,int m) {
+        return x>=0&&x<n&&y>=0&&y<m;
+    }
+}
+
+```
+
+# 【DFS/BFS】2024D-地图寻宝（BFS）
+
+#### 题目描述
+
+小华按照地图去寻宝，地图上被划分成 m 行和 n 列的方格，横纵坐标范围分别是 [0, n-1] 和 [0, m-1]。 
+
+在横坐标和纵坐标的数位之和不大于 k 的方格中存在黄金（每个方格中仅存在一克黄金），但横坐标和纵坐标数位之和大于 k 的方格存在危险不可进入。
+
+小华从入口 (0,0) 进入，任何时候只能向左，右，上，下四个方向移动一格。 请问小华最多能获得多少克黄金？
+
+#### 输入
+
+坐标取值范围如下： 0 ≤ m ≤ 50，0 ≤ n ≤ 50
+
+k 的取值范围如下： 0 ≤ k ≤ 100 
+
+输入中包含 3 个字数，分别是 m, n, k
+
+#### 输出
+
+输出小华最多能获得多少克黄金
+
+#### 样例输入 复制
+
+```plain
+40 40 18
+```
+
+#### 样例输出 复制
+
+```plain
+1484
+```
+
+#### coding
+
+```java
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt(); // 行数
+        int m = sc.nextInt(); // 列数
+        int k = sc.nextInt(); // 数位之和的最大允许值
+        sc.close();
+        int maxTreasure = treasureHunt(n, m, k);
+        System.out.println(maxTreasure);
+    }
+
+    private static int treasureHunt(int n, int m, int k) {
+        if (!isFeasible(0, 0, k)) return 0; // 检查起点是否安全
+
+        boolean[][] visited = new boolean[n][m];
+        Queue<int[]> queue = new LinkedList<>();
+        queue.offer(new int[]{0, 0});
+        visited[0][0] = true;
+        int count = 0;
+
+        while (!queue.isEmpty()) {
+            int[] current = queue.poll();
+            int i = current[0];
+            int j = current[1];
+            count++; // 访问该方格，增加黄金计数
+
+            int[][] directions = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+            for (int[] dir : directions) {
+                int ni = i + dir[0];
+                int nj = j + dir[1];
+                if (isValid(ni, nj, n, m) && !visited[ni][nj] && isFeasible(ni, nj, k)) {
+                    visited[ni][nj] = true;
+                    queue.offer(new int[]{ni, nj});
+                }
+            }
+        }
+        return count;
+    }
+
+    private static boolean isValid(int i, int j, int n, int m) {
+        return i >= 0 && i < n && j >= 0 && j < m;
+    }
+
+    private static boolean isFeasible(int i, int j, int k) {
+        return getDigitSum(i) + getDigitSum(j) <= k;
+    }
+
+    private static int getDigitSum(int number) {
+        int sum = 0;
+        while (number > 0) {
+            sum += number % 10;
+            number /= 10;
+        }
+        return sum;
+    }
+}
+
+```
+
+# 【DFS/BFS】2024D-二叉树的广度优先遍历
+
+#### 题目描述
+
+有一棵二叉树，每个节点由一个大写字母标识（最多26个节点），现有两组字母，分别表示后序遍历 (左孩子->右孩子->父节点) 和中序遍历 (左孩子->父节点->右孩子) 的结果，请输出层次遍历的结果。
+
+#### 输入
+
+输入为两个字符串，分别是二叉树的后序遍历和中序遍历结果
+
+#### 输出
+
+输出二叉树的层次遍历结果
+
+#### 样例输入 复制
+
+```plain
+CBEFDA CBAEDF
+```
+
+#### 样例输出 复制
+
+```plain
+ABDCEF
+```
+
+#### 提示
+
+二叉树为
+  A
+  / \
+ B  D
+ /  / \
+C  E  F
+
+#### coding
+
+```java
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Scanner;
+
+public class Main {
+    public static class Node{
+        public char value;
+        public Node left;
+        public Node right;
+        public Node(char value) {
+            this.value = value;
+        }
+        public Node(char value, Node left, Node right) {
+            this.value = value;
+            this.left = left;
+            this.right = right;
+        }
+    }
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        String[] strings = sc.nextLine().split(" ");
+        String postorder=strings[0];
+        String inorder=strings[1];
+        Node root=buildTree(postorder,inorder);
+        levelOrderTraversal(root);
+    }
+
+    private static void levelOrderTraversal(Node root) {
+        if(root==null) return;
+        Queue<Node> q=new LinkedList<>();
+        q.add(root);
+        while(!q.isEmpty()){
+            Node temp=q.poll();
+            System.out.print(temp.value);
+            if(temp.left!=null) q.add(temp.left);
+            if(temp.right!=null) q.add(temp.right);
+        }
+    }
+
+    private static Node buildTree(String postorder, String inorder) {
+        if (postorder.isEmpty() || inorder.isEmpty()) {return null;}
+        int poL = postorder.length();
+        int ioL = inorder.length();
+        char c = postorder.charAt(poL - 1);
+        Node root = new Node(c);
+        int idx = inorder.indexOf(c);
+        root.left = buildTree(postorder.substring(0,idx), inorder.substring(0,idx));
+        root.right = buildTree(postorder.substring(idx,poL-1),inorder.substring(idx+1));
+        return root;
+    }
+}
+
+```
+
+# 【DFS/BFS】2024D-聚餐地点
+
+#### 题目描述
+
+小华和小为是很好的朋友，他们约定周末一起吃饭，通过手机交流，他们在地图上选择了很多聚餐地点 
+
+（由于自然地形等原因，部分聚餐地点不可达），求小华和小为都能达到的聚餐地点有多少个。
+
+#### 输入
+
+第一行输入 m 和 n，m 表示地图长度，n 表示地图宽度 
+
+第二行开始具体输入地图信息，地图信息包括 
+
+0 为通畅的道路 
+
+1 为障碍物（且仅 1 为障碍物） 
+
+2 为小华或小为，地图中必定有且仅有两个（非障碍物） 
+
+3 为被选中的聚餐地点（非障碍物）
+
+#### 输出
+
+可以两方都到达的聚餐地点的数量，行末无空格
+
+#### 样例输入 复制
+
+```plain
+4 4
+2 1 0 3
+0 1 2 1
+0 3 0 0
+0 0 0 0
+```
+
+#### 样例输出 复制
+
+```plain
+2
+```
+
+#### coding
+
+```java
+import java.util.LinkedList;
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        int m = sc.nextInt();
+        int[][] grid = new int[n][m];
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                grid[i][j] = sc.nextInt();
+            }
+        }
+        int dinnerCount = countDinner(grid, n, m);
+        System.out.println(dinnerCount);
+    }
+
+    private static int countDinner(int[][] grid, int n, int m) {
+        LinkedList<int[]> queue = new LinkedList<>();
+        int[][] visited = new int[n][m];  // 0:未访问, 1:由小华访问, 2:由小为访问, 3:两者都访问过
+        int[][] directions = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+        
+        // 初始化队列和访问数组
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                if (grid[i][j] == 2) {
+                    queue.add(new int[]{i, j});
+                    if (visited[i][j] == 0) {
+                        visited[i][j] = queue.size();  // 1 或 2 标记
+                    } else {
+                        visited[i][j] = 3;  // 两者都可以到达
+                    }
+                }
+            }
+        }
+        
+        // BFS遍历
+        while (!queue.isEmpty()) {
+            int[] position = queue.poll();
+            int x = position[0];
+            int y = position[1];
+            for (int[] direction : directions) {
+                int nx = x + direction[0];
+                int ny = y + direction[1];
+                if (isValid(nx, ny, n, m) && grid[nx][ny] != 1 && visited[nx][ny] != 3) {
+                    if (visited[nx][ny] == 0 || visited[nx][ny] != visited[x][y]) {
+                        visited[nx][ny] |= visited[x][y];  // 设置访问标记
+                        queue.offer(new int[]{nx, ny});
+                    }
+                }
+            }
+        }
+        
+        // 统计可以两方都到达的聚餐地点数量
+        int count = 0;
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                if (grid[i][j] == 3 && visited[i][j] == 3) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
+    private static boolean isValid(int x, int y, int n, int m) {
+        return x >= 0 && x < n && y >= 0 && y < m;
+    }
+}
+```
+
+# 【回溯】2024D-找到它
+
+#### 题目描述
+
+找到它是个小游戏，你需要在一个矩阵中找到给定的单词 
+
+假设给定单词HELLOWORLD，在矩阵中只要能找HELLOWORLD就算通过 
+
+注意区分英文字母大小写，并且你只能上下左右行走，不能走回头路
+
+#### 输入
+
+输入第一行包含两个整数N M (0 < N, M < 21) 
+
+分别表示N行M列的矩阵 
+
+第二行是长度不超过100的单词W 
+
+在整个矩阵中给定单词W只会出现一次 
+
+从第3行到第N+2是只包含大小写英文字母的长度为M的字符串矩阵
+
+#### 输出
+
+如果能在矩阵中连成给定的单词，则输出给定单词首字母在矩阵中的位置为第几行第几列 
+
+否则输出 NO
+
+#### 样例输入 复制
+
+```plain
+5 5
+HELLOWORLD
+CPUCY
+EKLQH
+CHELL
+LROWO
+DGRBC
+```
+
+#### 样例输出 复制
+
+```plain
+3 2
+```
+
+#### coding
+
+```java
+import java.util.LinkedList;
+import java.util.Scanner;
+
+public class Main {
+    private static final int[][] directions={{0,1},{1,0},{0,-1},{-1,0}};
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        int m = sc.nextInt();
+        sc.nextLine();
+        String target = sc.nextLine();
+        char[][] grid = new char[n][m];
+
+        for (int i = 0; i < n; i++) {
+            String line = sc.nextLine();
+            for (int j = 0; j < m; j++) {
+                grid[i][j] = line.charAt(j);
+            }
+        }
+        int[]position=findIt(grid,n,m,target);
+        if(position[0]==-1&&position[1]==-1){
+            System.out.println("NO");
+        }else{
+            System.out.println((position[0]+1)+" "+(position[1]+1));
+        }
+
+    }
+    private static int[] findIt(char[][] grid, int n, int m,String target) {
+        int[]position=new int[]{-1,-1};
+        boolean[][] visited=new boolean[n][m];
+        LinkedList<int[]> departures=new LinkedList<>();
+        for(int i=0;i<n;i++){
+            for(int j=0;j<m;j++){
+                if(target.startsWith(String.valueOf(grid[i][j]))){
+                    departures.add(new int[]{i,j});
+                }
+            }
+        }
+        while(!departures.isEmpty()){
+            int[] departure =departures.removeFirst();
+            int x=departure[0];
+            int y=departure[1];
+            visited[x][y]=true;
+            if(isFind(x,y,1,target,visited,grid)){
+                position[0]=x;
+                position[1]=y;
+                break;
+            }
+            visited[x][y]=false;
+        }
+        return position;
+    }
+    /*表示字符串第i个元素该如何选择去向*/
+    /*i之前的路径已匹配*/
+    private static boolean isFind(int x, int y, int i, String target, boolean[][] visited, char[][] grid) {
+        if(i==target.length()){return true;}
+        visited[x][y]=true;
+        int n=grid.length;
+        int m=grid[0].length;
+        /*回溯*/
+        for(int[] direction:directions){
+            int nx=x+direction[0];
+            int ny=y+direction[1];
+            if(isValid(nx,ny,n,m)&&!visited[nx][ny]&&grid[nx][ny]==target.charAt(i)){
+                if(isFind(nx,ny,i+1,target,visited,grid)){
+                    return true;
+                }
+                /*回溯*/
+                visited[nx][ny]=false;
+            }
+        }
+        return false;
+    }
+
+    private static boolean isValid(int x, int y, int n, int m) {
+        return x>=0&&x<n&&y>=0&&y<m;
+    }
+
+}
+```
+
+# 【回溯】2024D-考古学家
+
+#### 题目描述
+
+有一个考古学家发现一个石碑，但是很可惜 发现时其已经断成多段，原地发现 N 个断口整齐的石碑碎片，为了破解石碑内容 
+
+考古学家希望有程序能帮忙计算复原后的石碑文字，你能帮忙吗 
+
+
+
+备注 如果存在石碑碎片内容完全相同，则由于碎片间的顺序不影响复原后的碑文内容。仅相同碎片间的位置变化不影响组合
+
+#### 输入
+
+第一行输入 N，N 表示石碑碎片的个数 
+
+第二行依次输入石碑碎片上的文字内容 S 共有 N 组
+
+#### 输出
+
+输出石碑文字的组合(按照升序排列)，行尾无多余空格
+
+#### 样例输入 复制
+
+```plain
+3
+a b ab
+```
+
+#### 样例输出 复制
+
+```plain
+aabb
+abab
+abba
+baab
+baba
+```
+
+#### coding
+
+```java
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.Scanner;
+import java.util.stream.Collectors;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        String[] fragments=new String[n];
+        for (int i = 0; i < n; i++) {
+            fragments[i]=sc.next();
+        }
+        sc.close();
+        LinkedList<String>texts=recover(fragments,n);
+        Collections.sort(texts);
+        texts.stream().distinct().forEach(System.out::println);
+    }
+
+    private static LinkedList<String> recover(String[] fragments, int n) {
+        LinkedList<String> _fragments = new LinkedList<>(Arrays.stream(fragments).collect(Collectors.toList()));
+        LinkedList<String> texts = new LinkedList<>();
+        contact(_fragments,"",texts);
+        return texts;
+    }
+
+    private static void contact(LinkedList<String> fragments, String current, LinkedList<String> texts) {
+        if(fragments.isEmpty()){
+            texts.add(current);
+        }
+
+        for (String fragment : fragments) {
+            LinkedList<String> list = new LinkedList<>(fragments);
+            list.remove(fragment);
+            contact(list,current+fragment,texts);
+        }
+    }
+}
+
+```
+
+# 【回溯】2024D-田忌赛马
+
+**内存限制：128 MB****时间限制：2.000 S**
+
+**评测方式：文本比较****命题人：外部导入**
+
+**提交：531****解决：143**
+
+[提交](https://oj.algomooc.com/submitpage.php?id=3850)[提交记录](https://oj.algomooc.com/status.php?problem_id=3850)[统计](https://oj.algomooc.com/problemstatus.php?id=3850)[露一手!](https://oj.algomooc.com/problem.php?id=3850#)
+
+#### 题目描述
+
+给定两个只包含数字的数组 a, b，调整数组 a 里面数字的顺序，使得尽可能多的 a[i] > b[i]。数组 a 和 b 中的数字各不相同。 
+
+输出所有可以达到最优结果的 a 数组数量
+
+#### 输入
+
+输入的第一行是数组 a 中的数字， 输入的第二行是数组 b 中的数字， 其中只包含数字，每两个数字之间相隔一个空格，a，b 数组大小不超过 10
+
+#### 输出
+
+输出所有可以达到最优结果的 a 数组数量
+
+#### 样例输入 复制
+
+```plain
+11 12 20
+10 13 7
+```
+
+#### 样例输出 复制
+
+```plain
+2
+```
+
+#### 提示
+
+有两个 a 数组的排列可以达到最优结果，[12, 20, 11]和[11, 20, 12]，故输出 2
+
+#### coding
+
+```java
+import java.util.Arrays;
+import java.util.Scanner;
+
+public class Main {
+   static int maxMatches = 0;
+    static int optimalCount = 0;
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        String[] aStr = scanner.nextLine().split(" ");
+        String[] bStr = scanner.nextLine().split(" ");
+        Integer[] a = new Integer[aStr.length];
+        Integer[] b = new Integer[bStr.length];
+
+        for (int i = 0; i < a.length; i++) {
+            a[i] = Integer.parseInt(aStr[i]);
+            b[i] = Integer.parseInt(bStr[i]);
+        }
+
+        Arrays.sort(b); // 排序b数组以便比较
+        permuteAndEvaluate(a, b, 0);
+        
+        // 输出0而不是1，当没有任何有效的匹配时
+        if (maxMatches == 0) {
+            System.out.println(0);
+        } else {
+            System.out.println(optimalCount);
+        }
+    }
+
+    private static void permuteAndEvaluate(Integer[] a, Integer[] b, int start) {
+        if (start == a.length) {
+            int currentMatches = 0;
+            for (int i = 0; i < a.length; i++) {
+                if (a[i] > b[i]) {
+                    currentMatches++;
+                }
+            }
+
+            if (currentMatches > maxMatches) {
+                maxMatches = currentMatches;
+                optimalCount = 1;
+            } else if (currentMatches == maxMatches && maxMatches > 0) {
+                optimalCount++;
+            }
+            return;
+        }
+
+        for (int i = start; i < a.length; i++) {
+            swap(a, start, i);
+            permuteAndEvaluate(a, b, start + 1);
+            swap(a, start, i);
+        }
+    }
+
+    private static void swap(Integer[] array, int i, int j) {
+        Integer temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+    }
+}
 ```
 
