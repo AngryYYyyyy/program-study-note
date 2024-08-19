@@ -52,7 +52,7 @@ public class Test01 extends HttpServlet {//继承HttpServlet
 
 
 
-![image-20231201113018225](D:\note\Java\JavaWeb\Servlet\assets\image-20231201113018225.png)
+![image-20231201113018225](.\assets\image-20231201113018225.png)
 
 ## 3.登录页开发案例
 
@@ -138,9 +138,9 @@ web.xml配置，需要将欢迎页设置为login.html
 
 测试
 
-![image-20231201121303759](D:\note\Java\JavaWeb\Servlet\assets\image-20231201121303759.png)
+![image-20231201121303759](.\assets\image-20231201121303759.png)
 
-![image-20231201121219982](D:\note\Java\JavaWeb\Servlet\assets\image-20231201121219982.png)
+![image-20231201121219982](.\assets\image-20231201121219982.png)
 
 # 二、请求与响应
 
@@ -257,7 +257,7 @@ public class Test02 extends HttpServlet {
 
 修改Tomcat目录下conf的logging.properties文件。将编码格式设置为与控制台相同的。
 
-![image-20231201194025594](D:\note\Java\JavaWeb\Servlet\assets\image-20231201194025594.png)
+![image-20231201194025594](.\assets\image-20231201194025594.png)
 
 ### （2）请求乱码
 
@@ -267,7 +267,7 @@ Tomcat9.0.83版本会自动转换编码格式，与idea相同。
 
 也可以手动设置，在server.xml文件中，添加URIEncoding=“utf-8”
 
-![image-20231201194424549](D:\note\Java\JavaWeb\Servlet\assets\image-20231201194424549.png)
+![image-20231201194424549](.\assets\image-20231201194424549.png)
 
 #### 2）POST方法
 
@@ -302,9 +302,9 @@ resp.setContentType("text/html;charset=UTF-8");
 
 ## 1.继承和实现结构
 
-![image-20231203094141604](D:\note\Java\JavaWeb\Servlet\assets\image-20231203094141604.png)
+![image-20231203094141604](.\assets\image-20231203094141604.png)
 
-![image-20231203094710869](D:\note\Java\JavaWeb\Servlet\assets\image-20231203094710869.png)
+![image-20231203094710869](.\assets\image-20231203094710869.png)
 
 ## 2.各个结构的核心方法
 
@@ -345,7 +345,7 @@ resp.setContentType("text/html;charset=UTF-8");
 
 #### 1）`ServletCotext`
 
-![image-20231203105710986](D:\note\Java\JavaWeb\Servlet\assets\image-20231203105710986.png)
+![image-20231203105710986](.\assets\image-20231203105710986.png)
 
 `ServletContext` 代表了整个 web 应用的运行环境。一个 web 应用只有一个 `ServletContext` 实例，它是由 Servlet 容器创建的。用于在同一个 web 应用的不同部分间共享数据。
 
@@ -474,7 +474,7 @@ Servlet 的生命周期是由 Servlet 容器（如 Apache Tomcat）控制的，�
 
 ## 4.Servlet请求处理的详细过程
 
-![image-20231203104853269](D:\note\Java\JavaWeb\Servlet\assets\image-20231203104853269.png)
+![image-20231203104853269](.\assets\image-20231203104853269.png)
 
 - #### 浏览器发起 GET 请求
   用户通过浏览器向服务器发送一个基于 GET 方法的 HTTP 请求。
@@ -592,7 +592,7 @@ public class ExampleServlet extends HttpServlet {
 
 ### （2）forward
 
-![image-20231203115341341](D:\note\Java\JavaWeb\Servlet\assets\image-20231203115341341.png)
+![image-20231203115341341](.\assets\image-20231203115341341.png)
 
 #### 1）处理流程
 
@@ -645,7 +645,7 @@ public class Test02 extends HttpServlet {
 
 ### （3）include
 
-![image-20231203115639829](D:\note\Java\JavaWeb\Servlet\assets\image-20231203115639829.png)
+![image-20231203115639829](.\assets\image-20231203115639829.png)
 
 #### 1）处理流程
 
@@ -681,7 +681,7 @@ public class Test03 extends HttpServlet {
 
 响应重定向是通过在响应中设置一个特殊的状态码和头信息来实现的，告诉客户端（如浏览器）去请求一个新的 URL。适用于将用户导航到外部资源或在客户端完成状态变更后导航到新页面（如表单提交后重定向到确认页面），以防止重复提交。
 
-![image-20231203122947986](D:\note\Java\JavaWeb\Servlet\assets\image-20231203122947986.png)
+![image-20231203122947986](.\assets\image-20231203122947986.png)
 
 ### （1）特点
 
@@ -728,7 +728,7 @@ public class Test01 extends HttpServlet {
 
 项目结构如下：
 
-![image-20231203141113211](D:\note\Java\JavaWeb\Servlet\assets\image-20231203141113211.png)
+![image-20231203141113211](.\assets\image-20231203141113211.png)
 
 测试点击代码test.html
 

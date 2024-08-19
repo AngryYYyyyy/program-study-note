@@ -51,8 +51,6 @@ Tomcat广泛用于为不同类型的Web应用程序提供动力，从小型个�
 
 官网：[Apache Tomcat® - Welcome!](https://tomcat.apache.org/)
 
-![image-20231130120440213](.\assets\image-20231130120440213.png)
-
 注意：Tomcat启动需要Java的运行环境，在下载时，需要查询Tomcat各版本的Java运行环境版本。
 
 下面以9.0.83版本作为使用，需要至少Java8的运行环境
@@ -67,7 +65,7 @@ Tomcat广泛用于为不同类型的Web应用程序提供动力，从小型个�
 
 注意：
 
-启动前需要设置相关的环境变量，JAVA_HOME和CATALINA_HOME
+启动前需要设置相关的环境变量，JAVA_HOME和CATALINA_HOME（Tomcat路径）
 
 ### （3）退出
 

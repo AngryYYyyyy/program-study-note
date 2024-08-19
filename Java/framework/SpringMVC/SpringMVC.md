@@ -18,170 +18,150 @@ Spring MVC框架通过一系列注解和约定，简化了Web应用程序的开�
 
 # 二、简单使用
 
-## 1.导入相关依赖
+## 1.搭建项目结构
+
+> 版本：JDK 8、Tomcat 9.0.93
+
+![image-20240819092211345](./assets/image-20240819092211345.png)
+
+**/WEB-INF/ 目录** 此目录对外界是不可访问的，是保护应用配置和视图模板等文件的理想位置：
+
+- **web.xml**：放在 `/WEB-INF/` 目录的根部。它是 Servlet 规范的一部分，用于配置 Servlet、Filter 和 Listener 等。
+- **applicationContext.xml** 和其他 Spring 相关的配置文件（如 `dispatcher-servlet.xml`, `security-config.xml`, `data-access-config.xml` 等）也通常放在 `/WEB-INF/` 目录下，有时候它们会被放在一个专门的子目录中，如 `/WEB-INF/spring/`，以保持更好的组织性。
+
+- **views**：这个目录用于存放视图文件，如 JSP 文件。将视图文件放在 WEB-INF 下可以防止直接访问，确保视图只能通过控制器渲染。
+
+
+
+## 2.导入依赖
+
+使用Maven作为项目管理工具。
+
+注意版本兼容性。
 
 ```xml
-<dependencies>
-    <!--spring核心容器包-->
-    <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-context</artifactId>
-        <version>5.3.5</version>
-    </dependency>
-    <!--spring切面包-->
-    <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-aspects</artifactId>
-        <version>5.3.5</version>
-    </dependency>
-    <!--aop联盟包-->
-    <dependency>
-        <groupId>aopalliance</groupId>
-        <artifactId>aopalliance</artifactId>
-        <version>1.0</version>
-    </dependency>
-    <!--德鲁伊连接池-->
-    <dependency>
-        <groupId>com.alibaba</groupId>
-        <artifactId>druid</artifactId>
-        <version>1.1.10</version>
-    </dependency>
-    <!--mysql驱动-->
-    <dependency>
-        <groupId>mysql</groupId>
-        <artifactId>mysql-connector-java</artifactId>
-        <version>8.0.22</version>
-    </dependency>
-    <!--springJDBC包-->
-    <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-jdbc</artifactId>
-        <version>5.3.5</version>
-    </dependency>
-    <!--spring事务控制包-->
-    <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-tx</artifactId>
-        <version>5.3.5</version>
-    </dependency>
-    <!--spring orm 映射依赖-->
-    <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-orm</artifactId>
-        <version>5.3.5</version>
-    </dependency>
-    <!--Apache Commons日志包-->
-    <dependency>
-        <groupId>commons-logging</groupId>
-        <artifactId>commons-logging</artifactId>
-        <version>1.2</version>
-    </dependency>
-    <!--log4j2 日志-->
-    <dependency>
-        <groupId>org.apache.logging.log4j</groupId>
-        <artifactId>log4j-slf4j-impl</artifactId>
-        <version>2.14.0</version>
-        <scope>test</scope>
-    </dependency>
-    <!--lombok -->
-    <dependency>
-        <groupId>org.projectlombok</groupId>
-        <artifactId>lombok</artifactId>
-        <version>1.18.12</version>
-        <scope>provided</scope>
-    </dependency>
-    <!--spring test测试支持包-->
-    <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-test</artifactId>
-        <version>5.3.5</version>
-        <scope>test</scope>
-    </dependency>
-    <!--junit5单元测试-->
-    <dependency>
-        <groupId>org.junit.jupiter</groupId>
-        <artifactId>junit-jupiter-api</artifactId>
-        <version>5.7.0</version>
-        <scope>test</scope>
-    </dependency>
-    <!--springMVC支持包-->
-    <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-web</artifactId>
-        <version>5.3.5</version>
-    </dependency>
-    <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-webmvc</artifactId>
-        <version>5.3.5</version>
-    </dependency>
-</dependencies>
+<!-- Spring Core & Beans -->
+<dependency>
+    <groupId>org.springframework</groupId>
+    <artifactId>spring-context</artifactId>
+    <version>5.3.18</version>
+</dependency>
+<!-- Spring MVC -->
+<dependency>
+    <groupId>org.springframework</groupId>
+    <artifactId>spring-webmvc</artifactId>
+    <version>5.3.18</version>
+</dependency>
 ```
 
-## 2.处理相关配置文件
+## 2.配置文件
 
-web.xml中配置前端控制器
+### web.xml
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
-         version="4.0">
-  <!--配置DispatcherServlet ，指明springmvc.xml的路径-->
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
+                             http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+         version="3.1">
+
+  <!-- Root Context: defines shared resources visible to all other web components -->
+  <context-param>
+    <param-name>contextConfigLocation</param-name>
+    <param-value>/WEB-INF/spring/applicationContext.xml</param-value>
+  </context-param>
+
+  <listener>
+    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  </listener>
+
+  <!-- Servlets -->
   <servlet>
-    <servlet-name>dispatcherServlet</servlet-name>
+    <servlet-name>dispatcher</servlet-name>
     <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
     <init-param>
       <param-name>contextConfigLocation</param-name>
-      <param-value>classpath:springmvc.xml</param-value>
+      <param-value>/WEB-INF/spring/dispatcher-servlet.xml</param-value>
     </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>
-  <!--配置dispatcherServlet的映射路径为 / 包含全部的servlet,  JSP除外-->
   <servlet-mapping>
-    <servlet-name>dispatcherServlet</servlet-name>
+    <servlet-name>dispatcher</servlet-name>
     <url-pattern>/</url-pattern>
   </servlet-mapping>
 </web-app>
 ```
 
-springmvc.xml中配置包扫描（视图解析器）
+### dispatcher-servlet.xml
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
-       xsi:schemaLocation="
-       http://www.springframework.org/schema/beans
-       http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://www.springframework.org/schema/context
-       http://www.springframework.org/schema/context/spring-context.xsd
-">
-    <!--配置spring包扫描-->
-    <context:component-scan base-package="com.lxy"></context:component-scan>
-    <!--配置视图解析器
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context
+                           http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/mvc
+                           http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+    <!-- Activates various annotations to be detected in bean classes -->
+    <context:component-scan base-package="com.lxy.project.controller" />
+
+    <!-- Configures the annotation-driven Spring MVC Controller programming model.
+         Note that, with Spring 3.0, this tag works in Servlet MVC only! -->
+    <mvc:annotation-driven />
+
+    <!-- Define Spring MVC view resolver -->
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-        <property name="prefix" value="/WEB-INF/view/"  ></property>
-        <property name="suffix" value=".jsp"  ></property>
-    </bean>-->
+        <property name="prefix" value="/WEB-INF/views/" />
+        <property name="suffix" value=".jsp" />
+    </bean>
 </beans>
+
 ```
 
-## 3.编写业务
+## 3.业务开发
+
+### HomeController
 
 ```java
 @Controller
-@RequestMapping("/lxy")
-public class MyController {
-    @ResponseBody
-    @RequestMapping("/myServlet")
-    public String MyServlet(){
-        return "success";
+public class HomeController {
+    @RequestMapping("/home")
+    public ModelAndView home() {
+        System.out.println("HomeController");
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("home");
+        modelAndView.addObject("msg", "Welcome to Spring MVC");
+        return modelAndView;
     }
 }
 ```
+
+### home.jsp
+
+```jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+         pageEncoding="UTF-8" isELIgnored="false"%>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Home Page</title>
+</head>
+<body>
+<h1>Spring MVC Home Page</h1>
+<!-- 使用 EL 表达式从 ModelAndView 中获取数据 -->
+<p>${msg}</p>
+</body>
+</html>
+
+```
+
+![image-20240819092803608](./assets/image-20240819092803608.png)
 
 # 三、工作原理
 
@@ -189,10 +169,9 @@ public class MyController {
 
 > 处理器映射器、处理器适配器、视图解析器称为 SpringMVC 的三大组件
 
-### （1）DispatcherServlet
+![image-20240315093319263](.\assets\image-20240315093319263.png)
 
-- **作用**：是Spring MVC的前端控制器（Front Controller）。它负责接收所有的请求并将它们委托给相应的处理器，是整个流程控制的中心，由它调用其它组件处理用户的请求，降低了组件之间的耦合性。
-- **职责**：初始化Spring应用上下文，解析请求，查找对应的Controller，并进行请求分发。
+
 
 ### （2）HandlerMapping
 - **作用**：负责==根据请求的URL或其他信息通过多种映射器查找相应的Controller==。
@@ -210,24 +189,88 @@ public class MyController {
 - **作用**：根据Controller返回的视图名称，解析出实际要渲染的View对象。
 - **实例**：有多种实现，如`InternalResourceViewResolver`可以将视图名称解析为JSP页面的路径。
 
+Spring MVC 的这些组件是构建 Web 应用程序的核心。下面详细介绍每个组件的功能和作用：
 
+### （1）**DispatcherServlet**
+
+DispatcherServlet 是 Spring MVC 的前端控制器，它负责接收所有进入应用的 HTTP 请求并将它们委派给相应的处理器。它是 MVC 模式中的控制器部分，作为中心调度器，协调其他各个组件的工作。主要职责包括：
+
+1. 请求接收：作为 Servlet 容器（如 Tomcat）中的一个 Servlet，它首先接收所有请求。
+2. 请求解析：解析请求，提取 URI 并确定请求的目的地。
+3. 处理器映射：调用 HandlerMapping 确定哪个 Controller 应该处理请求。
+4. 请求委托：将请求委托给相应的 Controller。
+5. 响应返回：处理完请求后，收集响应从 Controller 返回给客户端。
+
+### （2）**HandlerMapping**
+
+HandlerMapping 负责根据请求的 URL 来查找处理该请求的 Controller。在 Spring MVC 配置中，可以定义多个 HandlerMapping，Spring 会按照顺序检查每个 HandlerMapping 直到找到一个匹配的处理器。常见的实现类有：
+
+1. **RequestMappingHandlerMapping**：支持 @RequestMapping 注解的处理器，可以根据 URL、HTTP 方法等多个维度匹配处理器。
+2. **SimpleUrlHandlerMapping**：直接通过 URL 映射到特定的处理器。
+
+### （3）**HandlerAdapter**
+
+HandlerAdapter 负责调用由 HandlerMapping 映射得到的具体处理器（Controller）。主要功能包括：
+
+1. 调用适配：将 DispatcherServlet 接收到的请求调用适配到具体的 Controller 方法。
+2. 参数绑定：负责将请求参数绑定到处理器方法的入参中。
+3. 执行处理：执行处理器方法并处理返回结果。
+
+### （4）**Controller**
+
+Controller 负责具体的业务逻辑处理。在 Spring MVC 中，一个 Controller 可以是一个简单的 POJO，通过 @Controller 注解标记。Controller 类通常包含一个或多个方法，这些方法使用 @RequestMapping 或其他相关注解来映射请求路径和方法。Controller 方法可以直接返回 ModelAndView 对象，或者使用 @ResponseBody 注解返回对象，由消息转换器转换为响应体。
+
+### （5）**ModelAndView**
+
+ModelAndView 是一个容器，它包含模型数据和视图信息，Controller 处理完业务逻辑后，通常会返回 ModelAndView 对象。它主要有两部分组成：
+
+1. Model：包含了视图渲染所需的数据。
+2. View：指定渲染哪个视图，或直接指定视图的名称。
+
+### （6）**ViewResolver**
+
+ViewResolver 负责解析 Controller 返回的视图名到具体的 View 实现，负责将模型数据渲染到视图中。常见的 ViewResolver 有：
+
+1. **InternalResourceViewResolver**：解析 JSP 文件路径，可以配置前缀和后缀。
+2. **ThymeleafViewResolver**：用于解析 Thymeleaf 模板视图。
+
+通过这些组件的协调工作，Spring MVC 能够有效地处理和响应用户请求，同时保持清晰的程序结构和灵活的配置。
 
 ## 2.执行流程
 
-![image-20240315093319263](.\assets\image-20240315093319263.png)
+### （1）**请求接收与解析**
 
-Spring MVC（Spring Web MVC）是基于Java的Spring框架的一部分，它实现了Web MVC（模型-视图-控制器）设计模式。其主要功能是简化Web应用程序的开发。下面是Spring MVC的基本工作流程：
+当用户发起请求时，所有请求首先被发送到 DispatcherServlet。作为前端控制器，DispatcherServlet 的任务是接收请求并确定请求的类型（如 GET、POST 等），并根据请求的 URL 或其他信息，解析请求以决定后续的操作。
 
-1. **接收请求**：用户发送请求到服务器，请求被发送到DispatcherServlet。
-2. **请求解析**：DispatcherServlet根据请求的URL或其他信息，调用HandlerMapping来查找处理该请求的Controller。
-3. **处理器映射**：HandlerMapping返回一个HandlerExecutionChain对象（==包含一个Controller和可能的一些拦截器==），DispatcherServlet则使用这个对象来处理请求。
-4. **调用控制器**：DispatcherServlet通过HandlerAdapter调用Controller的相应方法。
-5. **模型填充**：Controller处理请求后，会返回一个ModelAndView对象，==其中Model包含了视图渲染所需要的数据，而View是渲染的视图名称或实际的View对象==。
-6. **视图解析**：DispatcherServlet使用ViewResolver来解析Controller返回的View名称到一个具体的View实现。
-7. **渲染视图**：一旦View被解析，DispatcherServlet将模型数据传递给View，以便渲染视图。
-8. **返回响应**：最后，渲染的视图（即HTML页面）被返回给客户端浏览器。
+### （2）**处理器映射与调用**
+
+DispatcherServlet 使用 HandlerMapping 来确定哪个 Controller 应该处理该请求。HandlerMapping 根据配置的路由信息查找并返回一个 HandlerExecutionChain 对象，这个对象不仅包含了对应的 Controller，还可能包括多个 HandlerInterceptor（拦截器），用于在 Controller 处理请求前后执行额外的处理。
+
+### （3）**Controller 的执行**
+
+通过 HandlerAdapter，DispatcherServlet 调用 Controller 的方法。HandlerAdapter 负责适配 DispatcherServlet 和 Controller 之间的接口差异，确保 Controller 的执行。这一步骤中，Controller 可能会执行业务逻辑，访问数据库，或调用其他服务，最终生成响应数据。
+
+### （4）**数据模型与视图选择**
+
+Controller 处理完请求后，通常会产生一些数据，这些数据需要返回给用户。Controller 将这些数据放入 Model 中，并选择一个视图（View）进行渲染。这个过程通常通过返回一个 ModelAndView 对象完成，其中 Model 是数据模型，View 是视图的名称或实际的视图对象。
+
+### （5）**视图解析与渲染**
+
+DispatcherServlet 接收到 ModelAndView 后，使用 ViewResolver 来解析 ModelAndView 中的 View 部分。ViewResolver 根据配置将逻辑视图名称解析成具体的 View 实现，如解析成 JSP 文件的路径或其他视图技术的实现。
+
+### （6）**视图渲染**
+
+解析得到的 View 会用 Model 中的数据进行渲染。在这个阶段，视图技术（如 JSP、Thymeleaf 等）会根据 Model 提供的数据生成 HTML 内容。这一步是在服务器端完成的，生成的 HTML 将包含所有动态生成的内容。
+
+### （7）**响应返回**
+
+渲染完成后，生成的 HTML 内容被包装在 HTTP 响应中返回给客户端浏览器。这标志着整个请求处理流程的结束。
+
+通过这个流程，Spring MVC 处理来自用户的请求，并生成响应的页面或其他类型的响应，如 JSON 数据，实现了 Web 应用程序的基本交互功能。这个流程的设计使得开发者可以清晰地分离控制逻辑、业务模型和视图展示，从而提高应用程序的可维护性和扩展性。
 
 ## 3.配置相关组件
+
+dispatcher-servlet.xml
 
 ```xml
 <!--配置处理器映射器-->
@@ -239,7 +282,7 @@ Spring MVC（Spring Web MVC）是基于Java的Spring框架的一部分，它实�
     <mvc:annotation-driven/>
     <!--配置视图解析器-->
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-        <property name="prefix" value="/WEB-INF/view/"  ></property>
+        <property name="prefix" value="/WEB-INF/views/"  ></property>
         <property name="suffix" value=".jsp"  ></property>
     </bean>
 ```
@@ -250,7 +293,9 @@ Spring MVC（Spring Web MVC）是基于Java的Spring框架的一部分，它实�
 
 在Web应用中，处理静态资源（如图片、CSS和JavaScript文件）是一个常见需求。Spring MVC提供了灵活的方式来处理静态资源，确保这些资源可以被直接请求而不经过Spring的DispatcherServlet，从而提高效率。以下是在Spring MVC中配置静态资源放行的几种常用方法：
 
-### （1）使用`<mvc:resources>`标签（XML配置）
+### （1）使用`<mvc:resources>`标签（web.xml）
+
+
 
 如果您使用XML配置，可以通过`<mvc:resources>`标签映射静态资源路径。这个标签告诉Spring哪些路径下的资源应该直接对外提供服务，而不是被当作控制器请求处理。
 
@@ -271,8 +316,8 @@ public class WebConfig implements WebMvcConfigurer {
     
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/resources/**")
-                .addResourceLocations("/public-resources/");
+        registry.addResourceHandler("/resources/**")//定义了静态资源的可访问 URL 路径模式
+                .addResourceLocations("/public-resources/");//静态资源的存放位置
     }
 }
 ```
@@ -943,7 +988,7 @@ jdbc_password=root
 </beans>
 ```
 
-### （5）springmvc.xml
+### （5）dispatcher-servlet.xml
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
