@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -32,20 +33,19 @@ public class UserDetailsServiceImpl implements UserDetailsService {
      */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        // 创建查询包装器，设置查询条件为用户名匹配
-        QueryWrapper<User> wrapper = new QueryWrapper<>();
-        wrapper.eq("user_name", username);
 
         // 从数据库中查询用户
-        User user = userMapper.selectOne(wrapper);
+        User user = userMapper.getUserByUserName(username);
 
         // 检查是否找到用户，如果没有找到则抛出异常
         if (Objects.isNull(user)) {
             throw new UsernameNotFoundException("未找到该用户");
         }
+        //从数据库中查询用户的权限信息
+        List<String> roles = userMapper.getRolesForUser(user.getUserId());
 
         // 如果找到用户，则返回封装在 LoginUser 类中的用户详情
-        return new LoginUser(user);
+        return new LoginUser(user, roles);
     }
 }
 

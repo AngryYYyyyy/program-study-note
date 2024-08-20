@@ -13,9 +13,9 @@ import java.util.Date;
 public class JwtUtils {
 
     // 用于签名JWT令牌的密钥。请将"your_secret_key"替换为一个强大的、私有的密钥。
-    private static final String SECRET_KEY = "your_secret_key";
+    private static final String SECRET_KEY = "secret_key";
     //毫秒转分钟
-    private static final long MINUTES = 1000*60;
+    private static final long MINUTES = 1000*60L;
     //默认过期时间30分钟
     private static final long EXPIRED_TIME = 30*MINUTES;
 

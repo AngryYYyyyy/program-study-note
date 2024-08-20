@@ -51,6 +51,61 @@ Spring Security 的核心组件主要可以分为以下几个部分：
 ### （4）入口点（Entry Points）
 
 1. **AuthenticationEntryPoint**：处理认证过程中的异常或失败。例如，当用户请求一个需要认证的资源而用户未认证时，它决定如何响应。
+1. **AccessDeniedHandler：**处理授权过程中的异常或失败。当用户请求某个受保护的资源，但是由于权限不足被拒绝访问时，它决定如何响应。
+
+### （5）HttpSecurity
+
+在Spring Security 6.x版本中，`HttpSecurity`的配置方式有了一些更新，特别是在定义安全配置时采用了更现代的Java配置方法。以下是Spring Security 6.x中`HttpSecurity`的主要特性和配置方法的详细解析：
+
+Spring Security 6.x推荐使用`SecurityFilterChain` bean来配置安全策略，而不是继承`WebSecurityConfigurerAdapter`。这一变化使得安全配置更加灵活，更易于集成和测试。
+
+这是一个基本的`SecurityFilterChain`配置示例，演示了如何使用`HttpSecurity`：
+
+```java
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.web.SecurityFilterChain;
+
+@Bean
+public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    http
+        .authorizeHttpRequests(authorize -> authorize
+            .requestMatchers("/admin/**").hasRole("ADMIN")
+            .anyRequest().authenticated()
+        )
+        .formLogin(withDefaults())
+        .httpBasic(withDefaults());
+    return http.build();
+}
+```
+
+1. **认证入口点（Authentication Entry Points）**：
+   - `httpBasic()`: 启用HTTP基础认证。
+   - `formLogin()`: 启用表单登录。
+
+2. **请求授权（Request Authorization）**：
+   - `authorizeHttpRequests()`: 允许基于HttpServletRequest限制访问。
+   - `antMatchers()`, `mvcMatchers()`: 指定URL模式以应用安全约束。
+
+3. **会话管理（Session Management）**：
+   - `sessionManagement()`: 配置会话固定保护，会话失效处理等。
+
+4. **CSRF保护（Cross-Site Request Forgery Protection）**：
+   - `csrf()`: 启用或禁用CSRF保护。
+
+5. **跨域资源共享（CORS）**：
+   - `cors()`: 配置跨域资源共享政策。
+
+6. **例外处理（Exception Handling）**：
+   - `exceptionHandling()`: 配置自定义的认证入口点和访问拒绝处理器。
+
+7. **注销（Logout）**：
+   - `logout()`: 配置注销行为，例如注销URL和注销成功后的重定向。
+
+8. **重定向和转发（Redirection and Forwarding）**：
+   - `redirectStrategy()`, `defaultSuccessUrl()`, `failureUrl()`: 配置成功或失败后的重定向策略。
+
+Spring Security 6.x还支持许多高级安全特性，如OAuth2, OpenID Connect, SAML, 和多因素认证。这些特性通常需要更复杂的配置，涉及多个组件和外部服务。
 
 通过这些核心组件，Spring Security 提供了一个既灵活又强大的安全框架，可以应用于各种大小和复杂度的 Java 应用程序中。这些组件协同工作，确保应用程序的安全性，防止未经授权的访问，并保护应用程序免受常见的安全威胁。
 
@@ -391,7 +446,7 @@ class JWTUtilsTest {
 }
 ```
 
-## 2.认证流程详解
+## 2.认证流程
 
 ### （1）核心流程
 
@@ -1109,18 +1164,14 @@ public class LoginServiceImpl implements LoginService {
             throw new RuntimeException("登录失败");
         }
 
-        // 如果认证成功，从数据库中检索完整的用户信息
-        QueryWrapper<User> wrapper = new QueryWrapper<>();
-        wrapper.eq("user_name", user.getUserName());
-        user = userMapper.selectOne(wrapper);
 
-        // 生成并返回 JWT
-        String userId = user.getUserId().toString();
-        String jwt = JwtUtils.createToken(userId);
+        // 认证成功生成并返回 JWT
+        String uuid = UUIDUtils.simpleUUID();
+        String jwt = JwtUtils.createToken(uuid);
 
         // 将用户详情存储在 Redis 中，以便通过 JWT 管理会话
         LoginUser loginUser = (LoginUser) authentication.getPrincipal();
-        String redisKey = "login:" + userId;
+        String redisKey = "login:" + uuid;
         redisCache.setCacheObject(redisKey, loginUser);
 
         return jwt;
@@ -1250,7 +1301,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         String redisKey = "login:" + userId;
         LoginUser loginUser = redisCache.getCacheObject(redisKey);
         if (Objects.isNull(loginUser)) {
-            throw new RuntimeException("用户未登录");
+            throw new throw new AuthenticationException("用户未登录");
         }
 
         // 构造认证对象并设置到 SecurityContext 中
@@ -1346,161 +1397,24 @@ public class LoginServiceImpl implements LoginService {
 
 # 四、授权
 
-# 五、自定义失败处理
-
-# 六、跨域配置
-
-
-
-## 3.授权
-
-### （1）什么是authorization
+## 1.什么是authorization
 
 授权是信息安全中的一个核心概念，其目的是确保只有得到授权的用户或系统才能访问资源或执行操作。授权过程通常在认证（Authentication）之后进行，认证是用来验证用户的身份，例如通过用户名和密码。一旦用户的身份得到认证，系统就会进行授权，根据用户的权限决定他们可以访问哪些资源或执行哪些操作。
 
-授权可以通过多种方式实现，其中包括：
+### （1）Authorize HTTP Request
 
-- **基于角色的访问控制（RBAC）**：如你所述，通过角色来管理权限，适用于权限和角色较为固定的环境。
-- **基于属性的访问控制（ABAC）**：允许基于用户属性（如部门、地理位置等）来动态控制访问权限，更加灵活。
-- **基于策略的访问控制（PBAC）**：通过详细的策略规则来管理用户对资源的访问，适用于需要复杂规则的环境。
+### （2）Method Security
 
-### （2）RBAC
+#### `@EnableMethodSecurity`
 
-RBAC 是一种非常流行的授权模型，它简化了权限管理。在这个模型中，权限不是直接分配给用户，而是分配给角色，用户通过成为角色的一部分来继承这些权限。这种模式的优势在于：
-
-- **简化管理**：管理者只需关心角色的权限设置，而不是每个个体用户的权限。
-- **提高安全性**：通过严格定义角色和相关权限，可以减少不必要的权限赋予。
-- **易于扩展**：随着组织的发展，可以轻松添加新的角色或修改现有角色的权限，而不需要重新配置每个用户。
-
-RBAC 特别适用于用户基数大且角色定义明确的组织，如企业、政府机构等。在设计系统时，通常需要仔细定义角色和权限，以确保既满足业务需求，又不妨碍系统的安全性和管理效率。
-
-通过这些概念和机制的正确实施，组织可以有效地控制对敏感信息和关键资源的访问，从而保护数据不受未授权的使用或泄露。
-
-### （3）自定义授权
-
-在Spring Security框架中，自定义授权是通过设置访问特定资源所需的权限来实现的。这一过程涉及使用注解来声明方法级的安全要求，以及通过角色基于访问控制（RBAC）模型来管理用户权限。
-
-#### 设置资源访问所需要的权限
-
-在`SecurityConfig`类中添加`@EnableGlobalMethodSecurity(prePostEnabled = true)`注解，以启用全局方法级的安全性设置。这允许使用`@PreAuthorize`和`@PostAuthorize`注解来在方法执行前后执行安全性检查。
+在`SecurityConfig`类中添加`@EnableMethodSecurity`注解，以启用方法级的安全性设置。
 
 ```java
-@Configuration
-@EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true) // 启用方法安全性控制
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
-    // 配置方法
-}
+@EnableMethodSecurity
+public class SecurityConfig {}
 ```
 
-在控制器中，可以使用`@PreAuthorize`注解来定义哪些权限的用户可以访问特定的方法。例如，使用`@PreAuthorize("hasAuthority('test')")`注解确保只有拥有'test'权限的用户才能访问该方法。
-
-```java
-@RestController
-public class SomeController {
-
-    @PreAuthorize("hasAuthority('test')")
-    @GetMapping("/secured")
-    public ResponseEntity<String> getSecuredResource() {
-        return ResponseEntity.ok("This is a secured resource");
-    }
-}
-
-```
-
-
-
-#### 根据RBAC权限模型创建表
-
-基于RBAC模型，需要在数据库中存储用户、角色和权限数据，并能够检索一个用户的所有权限。
-
-![image-20240731162800152](https://cdn.jsdelivr.net/gh/AngryYYyyyy/picture/note/202407311628644.png)
-
-#### 从数据库获取权限信息
-
-**数据库查询接口**
-
-```java
- public interface MenuMapper extends BaseMapper<Menu> {
-     
-     List<String> selectPermsByUserId(Long id);
- }
-```
-
-**MyBatis映射文件**
-
-```xml
- <?xml version="1.0" encoding="UTF-8" ?>
- <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
- 
- <mapper namespace="com.mashibing.springsecurity_example.mapper.MenuMapper">
- 
-     <select id="selectPermsByUserId" resultType="java.lang.String">
-         SELECT 
-             DISTINCT sm.perms
-         FROM sys_user_role sur 
-             LEFT JOIN sys_role sr ON sur.role_id = sr.role_id
-             LEFT JOIN sys_role_menu srm ON sr.role_id = srm.role_id
-             LEFT JOIN sys_menu sm ON srm.menu_id = sm.menu_id
-         WHERE 
-             user_id = #{userid}
-             AND sr.status = 0
-             AND sm.status = 0
-     </select>
- 
- </mapper>
-```
-#### 封装权限信息
-
-在`UserDetailsServiceImpl`中，从数据库查询用户权限，并将这些权限信息封装到`LoginUser`对象中。`LoginUser`对象应该实现`UserDetails`接口，提供权限信息的集合供Spring Security使用。
-
-```JAVA
- List<String> permissions = menuMapper.selectPermsByUserId(user.getUserId());
-        return new LoginUser(user, permissions);
-```
-
- 如果SpringSecurity想要获取用户权限信息,其实最终要调用 getAuthorities()方法,所以要在这个方法中将查询到的权限信息进行转换,转换另一个List集合,其中保存的数据类型是 GrantedAuthority 类型。这是一个接口,我们用它的这个实现`SimpleGrantedAuthority`。
-
-```java
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class LoginUser implements UserDetails {
- 
-    private SysUser sysUser; // 内部封装的 SysUser 对象，包含用户的详细信息。
- 	
-    private List<String> permissions;//存储权限信息集合
-    
-    //authorities集合不需要序列化,只需要序列化permissions集合即可
-    @JSONField(serialize = false)
-    private List<SimpleGrantedAuthority> authorities;
-    /**
-     * 返回用户所具有的权限集合，用于访问控制。
-     *
-     * @return 用户的权限集合
-     */
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        if(authorities != null){
-             return authorities;
-         }
-        authorities = permissions.stream()
-                 .map(SimpleGrantedAuthority::new)
-                 .collect(Collectors.toList());
-         return authorities;
-    }
-}
-```
-
-在`JwtAuthenticationTokenFilter`过滤器中，设置当前用户的权限信息到`SecurityContextHolder`，以便后续的请求能够进行权限验证。
-
-```java
-UsernamePasswordAuthenticationToken authenticationToken =
-     new UsernamePasswordAuthenticationToken(loginUser, null, loginUser.getAuthorities());
- SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-```
-
-### （4）@PreAuthorize
+#### `@PreAuthorize`
 
 `@PreAuthorize` 是 Spring Security 提供的一种注解，用于方法安全，它允许在方法调用之前基于表达式的条件来进行访问控制。这种权限控制的方法特别适合细粒度的安全需求，例如对特定方法的访问进行限制。下面详细介绍 `@PreAuthorize` 的用法，特别是和 `hasAuthority`, `hasAnyAuthority`, `hasRole`, `hasAnyRole` 这些常用方法的结合。
 
@@ -1550,7 +1464,159 @@ public class UserService {
 - 使用 `@PreAuthorize` 时需要确保启用了方法安全性配置。在 Spring 配置中可以通过 `@EnableGlobalMethodSecurity(prePostEnabled = true)` 来启用。
 - `@PreAuthorize` 可以与 `@PostAuthorize`, `@PreFilter`, `@PostFilter` 等注解一起使用，提供更复杂的安全策略。
 
-## 4.异常处理
+### （3）RBAC
+
+RBAC 是一种非常流行的授权模型，它简化了权限管理。在这个模型中，权限不是直接分配给用户，而是分配给角色，用户通过成为角色的一部分来继承这些权限。这种模式的优势在于：
+
+- **简化管理**：管理者只需关心角色的权限设置，而不是每个个体用户的权限。
+- **提高安全性**：通过严格定义角色和相关权限，可以减少不必要的权限赋予。
+- **易于扩展**：随着组织的发展，可以轻松添加新的角色或修改现有角色的权限，而不需要重新配置每个用户。
+
+RBAC 特别适用于用户基数大且角色定义明确的组织，如企业、政府机构等。在设计系统时，通常需要仔细定义角色和权限，以确保既满足业务需求，又不妨碍系统的安全性和管理效率。
+
+通过这些概念和机制的正确实施，组织可以有效地控制对敏感信息和关键资源的访问，从而保护数据不受未授权的使用或泄露。
+
+基于RBAC模型，需要在数据库中存储用户、角色和权限数据，并能够检索一个用户的所有权限。
+
+![image-20240820110100714](./assets/image-20240820110100714.png)
+
+## 2.授权流程
+
+在Spring Security中，授权的基本流程涉及几个关键组件和步骤。这个流程确保了只有具有相应权限的用户能够访问应用中的受保护资源。
+
+1. 用户认证：授权之前，首先要完成用户的认证。用户提供凭据（如用户名和密码），系统验证这些凭据是否与存储在安全数据源（如数据库）中的凭据匹配。
+
+2. 加载用户权限：一旦用户成功认证，系统会加载该用户的权限或角色。这些权限可能直接关联到用户，也可能通过用户所属的角色间接关联。
+
+3. 请求拦截：用户发起请求访问资源时，Spring Security的过滤器链会拦截这个请求。过滤器链是一系列的过滤器，负责不同的安全功能，如身份验证、授权检查等。
+
+4. 授权决策：请求被拦截后，`AccessDecisionManager` 负责做出授权决策。它会根据用户的权限、请求所需的权限（通常由配置或注解指定，如 `@PreAuthorize`），以及可能的其他因素（如IP地址、时间等）来决定是否允许访问。
+
+5. 访问控制：如果 `AccessDecisionManager` 判断用户拥有足够的权限，请求就会被允许继续执行，用户可以访问请求的资源。如果权限不足，用户会收到一个错误消息，通常是403 Forbidden错误，表示没有访问权限。
+
+6. 处理完成：一旦授权决策完成，后续的过滤器会继续处理请求，最终将控制权交给应用程序的业务逻辑。
+
+授权是确保应用安全的关键环节，涉及到的组件和流程在不同的应用和配置中可能有所变化，但基本原理保持一致。如果你需要进一步的细节或具体的帮助，请随时提问。
+
+## 3.自定义授权
+
+在Spring Security框架中，自定义授权是通过设置访问特定资源所需的权限来实现的。这一过程涉及使用注解来声明方法级的安全要求，以及通过角色基于访问控制（RBAC）模型来管理用户权限。
+
+### （1）基于RBAC的库表设计
+
+从数据库获取用户的角色信息
+
+```java
+@Mapper
+public interface UserMapper extends BaseMapper<User> {
+    /**
+     * 通过用户ID查询对应的角色键值。
+     * 此方法通过联表查询在sys_user, sys_user_role, 以及sys_role中获取指定用户的角色键值。
+     * 
+     * @param userId 用户的唯一标识ID
+     * @return 返回对应用户的角色键值，如果没有找到对应数据则返回null
+     */
+    @Select("SELECT r.role_key FROM sys_user u INNER JOIN sys_user_role ur ON u.user_id = ur.user_id INNER JOIN sys_role r ON ur.role_id = r.role_id WHERE u.user_id = #{userId}")
+    String getRoleKeyForUser(Long userId);
+}
+```
+
+### （2）设置资源访问的权限
+
+在控制器中，可以使用`@PreAuthorize`注解来定义哪些权限的用户可以访问特定的方法。
+
+```java
+@RestController
+public class HelloController {
+    @PreAuthorize("hasRole('admin')")
+    @GetMapping("/hello")
+    public String hello() {
+        return "hello";
+    }
+}
+```
+
+### （3）封装权限
+
+在`UserDetailsServiceImpl`中，从数据库查询用户权限，并将这些权限信息封装到`LoginUser`对象中。`LoginUser`对象应该实现`UserDetails`接口，提供权限信息的集合供Spring Security使用。
+
+```JAVA
+/**
+ * 自定义用户详情服务实现，用于根据用户名加载用户详细信息。
+ * @Author ：AngryYYYYYY
+ * @Date ：Created in 2024/8/19 21:09
+ * @Description：通过数据库查询用户信息，如果用户存在则返回用户详情，否则抛出异常。
+ */
+@Service
+public class UserDetailsServiceImpl implements UserDetailsService {
+		//.....
+        //从数据库中查询用户的权限信息
+        List<String> roles = userMapper.getRolesForUser(user.getUserId());
+
+        // 如果找到用户，则返回封装在 LoginUser 类中的用户详情
+        return new LoginUser(user,roles);
+    }
+}
+```
+
+ 如果SpringSecurity想要获取用户权限信息,其实最终要调用 getAuthorities()方法,所以要在这个方法中将查询到的权限信息进行转换,转换另一个List集合,其中保存的数据类型是 GrantedAuthority 类型。这是一个接口,我们用它的这个实现`SimpleGrantedAuthority`。
+
+```java
+/**
+ * 用户登录信息封装类，实现了 Spring Security 的 UserDetails 接口，用于存储用户的认证和授权信息。
+ *
+ * @Author ：AngryYYYYYY
+ * @Date ：Created in 2024/8/19 20:59
+ * @Description：包含用户实体和用户权限列表，提供用户认证时的基本信息。
+ */
+@Data
+public class LoginUser implements UserDetails {
+    private User user;  // 用户实体对象，用于获取用户详细信息
+    List<String> roles; // 用户拥有的角色列表
+    //authorities集合不需要序列化,只需要序列化permissions集合即可
+    private transient List<SimpleGrantedAuthority> authorities;
+    /**
+     * 构造函数，接收一个用户实体和角色列表作为参数。
+     *
+     * @param user  用户实体对象
+     * @param roles 角色列表
+     */
+    public LoginUser(User user, List<String> roles) {
+        this.user = user;
+        this.roles = roles;
+        this.authorities = roles != null ? roles.stream()
+            .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
+            .collect(Collectors.toList()) : null;
+    }
+
+
+    /**
+     * 获取用户的权限列表。
+     *
+     * @return 用户的权限集合，如果用户无角色，则返回空列表。
+     */
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return authorities == null ? Collections.emptyList() : authorities;
+    }
+    //......
+}
+
+```
+
+注意：
+
+**角色命名约定**：Spring Security 有一个特定的角色命名约定，即角色名称应以 "ROLE_" 作为前缀。因此，如果你在 `@PreAuthorize` 中使用 `hasRole('admin')`，你需要确保传递给 `SimpleGrantedAuthority` 的字符串是 "ROLE_admin"，而不仅仅是 "admin"。
+
+在`JwtAuthenticationTokenFilter`过滤器中，设置当前用户的权限信息到`SecurityContextHolder`，以便后续的请求能够进行权限验证。
+
+```java
+UsernamePasswordAuthenticationToken authenticationToken =
+     new UsernamePasswordAuthenticationToken(loginUser, null, loginUser.getAuthorities());
+ SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+```
+
+# 五、自定义异常处理
 
 ### （1）ExceptionTranslationFilter
 
@@ -1568,23 +1634,31 @@ public class UserService {
 **通过实现 **`AuthenticationEntryPoint` 接口，我们可以自定义未经身份验证的用户访问需要认证的资源时应该返回的响应。
 
 ```java
- /**
-  * 自定义认证过程异常处理
-  * @author spikeCong
-  * @date 2023/4/26
-  **/
- @Component
- public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint {
-     
-     @Override
-     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
- 
-         ResponseResult result = new ResponseResult(HttpStatus.UNAUTHORIZED.value(), "认证失败请重新登录");
-         String json = JSON.toJSONString(result);
-         WebUtils.renderString(response,json);
-     }
- }
- 
+/**
+ * 自定义认证入口点，用于处理需要认证的请求但用户未认证的情况。
+ * 当访问需要认证的资源而用户未登录时，此入口点将被调用。
+ *
+ * @author AngryYYYYYY
+ * @date 2024/08/20
+ */
+@Component
+public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
+
+    /**
+     * 在用户未认证的情况下启动认证过程或返回相应的错误信息。
+     * 当访问被保护的资源而用户未经认证时，该方法会被触发。
+     *
+     * @param request  表示客户端请求的 HttpServletRequest 对象
+     * @param response 表示服务端响应的 HttpServletResponse 对象
+     * @param authException 认证失败时抛出的异常
+     * @throws IOException 可能抛出的 IO 异常，通常是由于响应写入失败
+     */
+    @Override
+    public void commence(HttpServletRequest request, HttpServletResponse response,
+                         AuthenticationException authException) throws IOException {
+        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized - Please login.");
+    }
+}
 ```
 
 ### （3）AccessDeniedHandler
@@ -1594,48 +1668,199 @@ public class UserService {
 通过自定义实现 `AccessDeniedHandler` 接口，并覆盖 `handle` 方法，我们可以自定义处理用户被拒绝访问时应该返回的响应。
 
 ```java
- /**
-  * 自定义处理授权过程中的异常
-  * @author spikeCong
-  * @date 2023/4/26
-  **/
- @Component
- public class AccessDeniedHandlerImpl implements AccessDeniedHandler {
- 
-     @Override
-     public void handle(HttpServletRequest request, HttpServletResponse response,
-                        AccessDeniedException accessDeniedException) throws IOException, ServletException {
-         ResponseResult result = new ResponseResult(HttpStatus.FORBIDDEN.value(),"权限不足,禁止访问");
-         String json = JSON.toJSONString(result);
-         WebUtils.renderString(response,json);
-     }
- }
+/**
+ * 自定义访问拒绝处理器，用于处理授权失败的请求。
+ * 当用户尝试访问无权访问的资源时，此处理器将被调用。
+ *
+ * @author AngryYYYYYY
+ * @date 2024/08/20
+ */
+@Component
+public class CustomAccessDeniedHandler implements AccessDeniedHandler {
+
+    /**
+     * 处理访问被拒绝的情况，返回适当的错误信息。
+     * 当用户已经认证但没有足够权限访问特定资源时，该方法会被触发。
+     *
+     * @param request  表示客户端请求的 HttpServletRequest 对象
+     * @param response 表示服务端响应的 HttpServletResponse 对象
+     * @param accessDeniedException 授权失败时抛出的异常
+     * @throws IOException 可能抛出的 IO 异常，通常是由于响应写入失败
+     */
+    @Override
+    public void handle(HttpServletRequest request, HttpServletResponse response,
+                       AccessDeniedException accessDeniedException) throws IOException {
+        response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied - You are not allowed to access this resource.");
+    }
+}
 ```
 
 ### （4）SecurityConfig
 
-**先注入对应的处理器**
+先注入对应的处理器，然后使用HttpSecurity对象的方法去进行配置
 
 ```java
- @Autowired
- private AuthenticationEntryPoint authenticationEntryPoint;
- 
- @Autowired
- private AccessDeniedHandler accessDeniedHandler;
+@Configuration
+@EnableWebSecurity
+@EnableMethodSecurity
+public class SecurityConfig {
+    private CustomAccessDeniedHandler customAccessDeniedHandler;//自定义权限异常响应处理
+    @Autowired
+    private CustomAuthenticationEntryPoint customAuthenticationEntryPoint;//自定义认证异常响应处理
+
+    /**
+     * 定义并配置 SecurityFilterChain，用于处理HTTP安全性。
+     * @param http HttpSecurity配置对象，用于定义请求的安全处理。
+     * @return SecurityFilterChain 实例，表示配置好的HTTP安全链。
+     * @throws Exception 抛出异常，如果配置过程中出现错误。
+     */
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+                //配置异常处理器
+                .exceptionHandling(exception -> exception.authenticationEntryPoint(customAuthenticationEntryPoint).accessDeniedHandler(customAccessDeniedHandler));
+
+        return http.build();
+    }
+}
 ```
 
-**然后使用HttpSecurity对象的方法去进行配置**
+# 六、自定义认证处理
+
+## 1.为什么还要自定义认证处理
+
+认证异常处理器，特别是在Spring Security中通常被称为“认证入口点”（Authentication Entry Point），主要处理那些需要认证的请求，但用户尚未登录的情况。例如，如果一个未认证的用户尝试访问一个需要认证的资源，认证异常处理器会被触发来处理这种情况，通常是通过发送一个HTTP 401响应或重定向到登录页面。
+
+认证成功处理器在用户成功通过身份验证后被调用。它定义了认证成功后的行为，比如重定向到一个特定页面、记录审计事件、更新用户的最后登录时间或生成并返回令牌（如JWT）。
+
+认证失败处理器在用户身份验证失败时触发。例如，当用户提供错误的用户名或密码时，这个处理器定义了如何响应这种情况，比如记录失败尝试、发送一个错误信息或进行其他安全措施。
+
+总结来说，虽然认证异常处理器负责处理未认证的请求，成功和失败处理器则分别管理认证成功和失败的后续行为。这三者共同提供了一个全面的、可高度定制的认证管理机制，适用于各种复杂和多变的安全需求场景。
+
+## 2.自定义认证成功处理器
+
+在前后端分离的应用中，通常不需要在认证成功后进行页面跳转，而是需要返回JSON数据。自定义 `AuthenticationSuccessHandler` 允许开发者在用户成功登录后执行自定义逻辑，如返回一个包含状态和消息的JSON响应。
+
+一般来说，认证成功的响应由控制器进行控制，而非自定义的认证成功处理器。
 
 ```java
- //配置异常处理器
- http.exceptionHandling()
-     //配置认证失败处理器
-     .authenticationEntryPoint(authenticationEntryPoint)
-     //配置授权失败处理器
-     .accessDeniedHandler(accessDeniedHandler);
+/**
+ * 自定义认证成功处理器，用于处理用户认证成功后的操作。
+ * 当用户在前后端分离的应用中成功登录时，该处理器将被调用。
+ * 它返回一个包含用户主要信息的JSON格式响应。
+ *
+ * @author AngryYYYYYY
+ */
+public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
+
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
+    /**
+     * 在认证成功后被调用，用于处理成功后的逻辑。
+     * 该方法设置响应的状态码为200（OK），并将认证对象的主要信息转换为JSON格式输出。
+     *
+     * @param request 表示客户端请求的HttpServletRequest对象。
+     * @param response 表示服务端响应的HttpServletResponse对象。
+     * @param authentication 表示认证成功后的认证信息对象。
+     * @throws IOException 如果处理响应输出时发生IO异常。
+     */
+    @Override
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.setContentType("application/json");
+        // 将authentication对象中的主要信息转为JSON格式，并写入响应体
+        response.getWriter().write(objectMapper.writeValueAsString(authentication.getPrincipal()));
+    }
+}
 ```
 
-## 5.跨域资源共享
+## 3.自定义认证失败处理器
+
+同样地，自定义 `AuthenticationFailureHandler` 允许在用户登录失败时执行自定义操作，例如返回一个错误消息和状态码的JSON响应。
+
+由于我们使用的是基于Jwt的自定义认证过滤器，因此我们我们可以在`JwtAuthenticationTokenFilter`中进行一些失败响应。
+
+```java
+/**
+ * 自定义认证失败处理器，用于处理认证过程中发生的失败。
+ * 在用户认证失败时，该处理器被触发，并返回一个JSON格式的错误响应。
+ * 这对于前后端分离的应用尤其有用，前端应用能够根据返回的JSON消息显示适当的错误信息。
+ *
+ * @author AngryYYYYYY
+ */
+public class CustomAuthenticationFailureHandler implements AuthenticationFailureHandler {
+
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
+    /**
+     * 在用户认证失败时被调用，用于处理认证失败的情况。
+     * 该方法设置响应的状态码为401（Unauthorized），并将错误信息转换为JSON格式输出。
+     *
+     * @param request 表示客户端请求的HttpServletRequest对象。
+     * @param response 表示服务端响应的HttpServletResponse对象。
+     * @param exception 表示认证过程中抛出的异常，包含错误详情。
+     * @throws IOException 如果处理响应输出时发生IO异常。
+     */
+    @Override
+    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException {
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setContentType("application/json");
+        // 输出错误信息，将异常消息封装到JSON格式中，提供给前端详细的错误描述
+        response.getWriter().write(objectMapper.writeValueAsString("Error: " + exception.getMessage()));
+    }
+}
+```
+
+添加至过滤器
+
+```java
+/**
+     * 对每个请求执行一次 JWT 认证逻辑。
+     *
+     * @param request     请求对象
+     * @param response    响应对象
+     * @param filterChain 过滤器链
+     * @throws ServletException, IOException
+     */
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+
+        // 从请求头获取 JWT
+        String token = request.getHeader("token");
+
+        // 如果 token 为空，则继续处理请求链中的下一个过滤器
+        if (!StringUtils.hasText(token)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+        try {
+            // 解析 JWT 获取用户 ID
+            Claims claims = JwtUtils.parseToken(token);
+            String userId = claims.getSubject();
+
+            // 从 Redis 获取用户信息
+            String redisKey = "login:" + userId;
+            LoginUser loginUser = redisCache.getCacheObject(redisKey);
+            if (Objects.isNull(loginUser)) {
+                throw new AuthenticationException("用户登录过期") {
+                };
+            }
+
+            Authentication authenticationToken = new UsernamePasswordAuthenticationToken(loginUser, null, loginUser.getAuthorities());
+            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+
+        } catch (AuthenticationException e) {
+            // 使用失败处理器来处理异常
+            failureHandler.onAuthenticationFailure(request, response, e);
+        } finally {
+            filterChain.doFilter(request, response);
+        }
+    }
+```
+
+
+
+# 七、跨域配置
 
 ### （1）概述 
 
@@ -1733,298 +1958,19 @@ CORS的实现方式主要是通过HTTP头部来实现的，浏览器会在请求
  }
 ```
 
-## 6.认证处理器
 
-### （1）配置登录页面
 
-**引入模板依赖**
+# 八、拓展
 
-通过引入Thymeleaf模板引擎依赖，可以在Spring Boot项目中使用Thymeleaf作为页面渲染工具。这允许我们使用HTML模板来构建动态的Web页面。
+## 1.图形验证码
 
-```xml
- <!--thymeleaf-->
- <dependency>
-   <groupId>org.springframework.boot</groupId>
-   <artifactId>spring-boot-starter-thymeleaf</artifactId>
- </dependency>
-```
-
-**在 templates 中定义登录界面 `login.html`**
-
-创建一个简单的登录表单，该表单通过Thymeleaf的`th:action`属性指定表单数据提交到`/login`端点。
-
-```html
- <!DOCTYPE html>
- <html lang="en" xmlns:th="http://www.thymeleaf.org">
- <head>
-     <meta charset="UTF-8">
-     <title>登录页面</title>
- </head>
-     <body>
-         <h1>用户登录</h1>
-         <form method="post" th:action="@{/login}">
-             用户名:<input name="username" type="text"/><br>
-             密码:<input name="password" type="password"/><br>
-             <input type="submit" value="登录"/>
-         </form>
-     </body>
- </html>
-```
-
-**配置 Spring Security 配置类**
-
-配置Spring Security来处理登录认证，允许访问登录页面和主页（index），并为表单登录提供了自定义页面和处理路径。
-
-```java
- @Configuration
- public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
-     @Override
-     protected void configure(HttpSecurity http) throws Exception {
-         http.authorizeHttpRequests()    //开始配置授权，即允许哪些请求访问系统
-                 .mvcMatchers("/login.html").permitAll()   //指定哪些请求路径允许访问
-                 .mvcMatchers("/index").permitAll()      //指定哪些请求路径允许访问
-                 .anyRequest().authenticated()  //除上述以外,指定其他所有请求都需要经过身份验证
-                 .and()
-                 .formLogin()    //配置表单登录
-                 .loginPage("/login.html")      //登录页面
-                 .loginProcessingUrl("/login")  //提交路径
-                 .usernameParameter("username") //表单中用户名
-                 .passwordParameter("password") //表单中密码
-                 .successForwardUrl("/index")  //指定登录成功后要跳转的路径为 /index
-                 //.defaultSuccessUrl("/index")   //redirect 重定向  注意:如果之前请求路径,会有优先跳转之前请求路径
-                 .failureUrl("/login.html") //指定登录失败后要跳转的路径为 /login.htm
-                 .and()
-                 .csrf().disable();//关闭 CSRF
-     }
- }
-```
-
-**说明**
-
-* **permitAll() 代表放行该资源,该资源为公共资源 无需认证和授权可以直接访问**
-* **anyRequest().authenticated() 代表所有请求,必须认证之后才能访问**
-* **formLogin() 代表开启表单认证 **
-* **successForwardUrl 、defaultSuccessUrl 这两个方法都可以实现成功之后跳转**
-  * **successForwardUrl  默认使用 **`forward`跳转，不会跳转到之前请求路径`
-  * **defaultSuccessUrl   默认使用 **`redirect` 跳转 ，`defaultSuccessUrl(url, true)` 的第二个参数 `true` 或 `false` 用来指定是否应该忽略之前保存的请求并总是重定向到 `url`。如果设置为 `true`，不管之前是否有保存的请求，用户登录成功后都将被重定向到指定的 `url`。如果设置为 `false`（默认值），则会如上所述优先考虑之前的请求路径。
-
-注意:
-
-- 在配置安全规则时，确保公开可访问的路径（如登录页面）在任何需要认证的路径之前放行。
-- 使用的是Spring Security 5.7及更高版本，需要使用`SecurityFilterChain`和`WebSecurityCustomizer `代替`WebSecurityConfigurerAdapter`。
-
-**创建Controller**
-
-`Controller`定义了登录页面和一个测试用的响应方法。确保所有路径与业务需求相匹配。
-
-```java
- @Controller
- public class LoginController {
-     @RequestMapping("/ok")
-     public String ok(){
-         return "ok";
-     }
- 
-     @RequestMapping("/login.html")
-     public String login(){
-         return "login";
-     }
- }
-```
-
-### （2）自定义认证成功处理器
-
-在前后端分离的应用中，通常不需要在认证成功后进行页面跳转，而是需要返回JSON数据。自定义 `AuthenticationSuccessHandler` 允许开发者在用户成功登录后执行自定义逻辑，如返回一个包含状态和消息的JSON响应。
-
-**实现 `AuthenticationSuccessHandler`**
-
- `AuthenticationSuccessHandlerImpl` 类通过输出JSON格式的响应来通知前端登录成功，这种方式适合RESTful或前后端分离的架构。
-
-```java
- @Component
- public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHandler {
- 
-     @Override
-     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-                                         Authentication authentication) throws IOException, ServletException {
- 
-         Map<String, Object> result = new HashMap<String, Object>();
-         result.put("msg", "登录成功");
-         result.put("status", 200);
-         response.setContentType("application/json;charset=UTF-8");
-         String s = new ObjectMapper().writeValueAsString(result);
-         response.getWriter().println(s);
-     }
- }
-```
-
-**配置 `AuthenticationSuccessHandler`**
-
-在Spring Security配置中，通过注入自定义的 `AuthenticationSuccessHandler` 并在表单登录配置中使用它，实现了自定义的登录成功逻辑。
-
-```java
- @Configuration
- public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
- 
-     @Autowired
-     private AuthenticationSuccessHandler successHandler;
- 
-     @Override
-     protected void configure(HttpSecurity http) throws Exception {
-         http.authorizeHttpRequests()    
-       .and()
-                 .formLogin()    //配置表单登录
-                 .successHandler(successHandler)
-                 .failureUrl("/login.html") //指定登录失败后要跳转的路径为 /login.htm
-                 .and()
-                 .csrf().disable();//这里先关闭 CSRF
-     }
- }
-```
-
-### （3）自定义认证失败处理器
-
-同样地，自定义 `AuthenticationFailureHandler` 允许在用户登录失败时执行自定义操作，例如返回一个错误消息和状态码的JSON响应。
-
-**实现 `AuthenticationFailureHandler`**
-
-`AuthenticationFailureHandlerImpl` 类提供了登录失败时的自定义处理逻辑，通过返回包含错误信息的JSON响应通知前端。
-
-```java
- @Component
- public class AuthenticationFailureHandlerImpl implements AuthenticationFailureHandler {
-     @Override
-     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
-                                         AuthenticationException exception) throws IOException, ServletException {
- 
-         Map<String, Object> result = new HashMap<String, Object>();
-         result.put("msg", "登录失败: "+exception.getMessage());
-         result.put("status", 500);
-         response.setContentType("application/json;charset=UTF-8");
-         String s = new ObjectMapper().writeValueAsString(result);
-         response.getWriter().println(s);
-     }
- }
-```
-
-**配置 `AuthenticationFailureHandler`**
-
-展示了如何在Spring Security配置中设置自定义的登录失败处理器，这同样适用于需要向前端直接反馈登录结果的场景。
-
-```java
- @Configuration
- public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
- 
-     @Override
-     protected void configure(HttpSecurity http) throws Exception {
-         http.authorizeHttpRequests()
-               //...
-                 .and()
-                 .formLogin()
-                //..
-                 .failureHandler(new MyAuthenticationFailureHandler())
-                 .and()
-                 .csrf().disable();//这里先关闭 CSRF
-     }
- }
-```
-
-### （4）自定义注销登录处理器
-
-Spring Security 中也提供了默认的注销登录配置，在开发时也可以按照自己需求对注销进行个性化定制。
-
-```java
- @Configuration
- public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
- @Override
-     protected void configure(HttpSecurity http) throws Exception {
-         http.authorizeHttpRequests()
-                 //...
-                 .and()
-                 .formLogin()
-                 //...
-                 .and()
-                 .logout()
-                 .logoutUrl("/logout")
-                 .invalidateHttpSession(true)
-                 .clearAuthentication(true)
-                 .logoutSuccessUrl("/login.html")
-                 .and()
-                 .csrf().disable();//这里先关闭 CSRF
-     }
- }
-```
-
-* **通过 logout() 方法开启注销配置**
-* **logoutUrl 指定退出登录请求地址，默认是 GET 请求，路径为 **`/logout`
-* **invalidateHttpSession 退出时是否是 session 失效，默认值为 true**
-* **clearAuthentication 退出时是否清除认证信息，默认值为 true**
-* **logoutSuccessUrl 退出登录时跳转地址**
-
-注销登录在前后端分离的应用中通常也不需要页面重定向，而是需要返回一条注销成功的JSON消息。
-
-**自定义 `LogoutSuccessHandler`**
-
-通过实现 `LogoutSuccessHandler`，您提供了在用户注销登录成功后返回JSON消息的逻辑。
-
-```java
- @Component
- public class LogoutSuccessHandlerImpl  implements LogoutSuccessHandler {
- 
-     @Override
-     public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response,
-                                 Authentication authentication) throws IOException, ServletException {
-         
-         Map<String, Object> result = new HashMap<String, Object>();
-         result.put("msg", "注销成功");
-         result.put("status", 200);
-         response.setContentType("application/json;charset=UTF-8");
-         String s = new ObjectMapper().writeValueAsString(result);
-         response.getWriter().println(s);
-     }
- }
-```
-
-**配置注销登录**
-
-展示了如何配置Spring Security的注销功能，包括清除认证信息和HTTP会话，并使用自定义的 `LogoutSuccessHandler` 来处理注销成功事件。
-
-```java
- @Configuration
- public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
- 
-     @Autowired
-     private LogoutSuccessHandler logoutSuccessHandler;
- 
-     @Override
-     protected void configure(HttpSecurity http) throws Exception {
-         http.authorizeHttpRequests()    //开始配置授权，即允许哪些请求访问系统
- 
-                 .and()
-                 .formLogin()    //配置表单登录
-         //...
-                 .and()
-                 .logout()
- //                .logoutUrl("/logout")
-                 .invalidateHttpSession(true)
-                 .clearAuthentication(true)
- //                .logoutSuccessUrl("/login.html")
-                 .logoutSuccessHandler(logoutSuccessHandler)
-                 .and()
-                 .csrf().disable();//这里先关闭 CSRF
-     }
- }
-```
-
-## 7.图形验证码
-
-在用户登录时，一般通过表单的方式进行登录都会要求用户输入验证码，`Spring Security`默认没有实现图形验证码的功能，所以需要我们自己实现。
+在用户登录时，一般都会要求用户输入验证码，`Spring Security`默认没有实现图形验证码的功能，所以需要我们自己实现。
 
 #### （1）**自定义图形验证码的过滤器 `ImageCodeValidateFilter`**
 
 在 `UsernamePasswordAuthenticationFilter` 过滤器之前校验图形验证码的正确性。
 
-- 检查是否为POST方式的登录表单提交请求。
+- 检查是否为POST方式的提交请求。
 - 对于符合条件的请求，验证用户输入的验证码与服务器保存的验证码是否匹配。
 - 验证失败抛出自定义的 `ValidateCodeException`（继承自 `AuthenticationException`）。
 
@@ -2032,14 +1978,9 @@ Spring Security 中也提供了默认的注销登录配置，在开发时也可�
 
 图形验证码包含两部分：图片和文字验证码。
 
-- **Session机制（传统方式）**：
-  - 后端生成验证码并存储在Session中。
-  - 前端提交的验证码与Session中保存的进行比较。
-
-- **Token机制（前后端分离）**：
-  - 使用全局缓存（如Redis）存储验证码，以保证验证码的唯一性和时效性。
-  - 生成验证码同时创建一个唯一的验证码ID（codeId），将验证码和codeId保存到缓存中。
-  - 前端在请求验证码时获取codeId，并在提交表单时一同发送给后端进行验证。
+- 使用全局缓存（如Redis）存储验证码，以保证验证码的唯一性和时效性。
+- 生成验证码同时创建一个唯一的验证码ID（codeId），将验证码和codeId保存到缓存中。
+- 前端在请求验证码时获取codeId，并在提交表单时一同发送给后端进行验证。
 
 #### （3）**后端响应验证码**
 
@@ -2053,11 +1994,11 @@ Spring Security 中也提供了默认的注销登录配置，在开发时也可�
 **导入easy-captcha库**：这个库用于生成图形验证码，非常方便集成和使用。
 
 ```xml
-         <dependency>
-             <groupId>com.github.whvcse</groupId>
-             <artifactId>easy-captcha</artifactId>
-             <version>1.6.2</version>
-         </dependency>
+<dependency>
+    <groupId>com.github.whvcse</groupId>
+    <artifactId>easy-captcha</artifactId>
+    <version>1.6.2</version>
+</dependency>
 ```
 
 **`CaptchaController`**：负责生成验证码和将验证码信息（包括验证码图片和唯一标识）存储到Redis缓存中。验证码的唯一标识（UUID）和对应的验证码值存储在Redis中，以便验证时使用。
