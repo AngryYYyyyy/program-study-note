@@ -51,5 +51,4 @@ public class MybatisTest {
         /*关闭sql会话*/
         session.close();
     }
-
 }

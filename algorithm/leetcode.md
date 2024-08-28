@@ -400,6 +400,16 @@ class Solution {
 }
 ```
 
+
+
+# 9.回文数
+
+给你一个整数 `x` ，如果 `x` 是一个回文整数，返回 `true` ；否则，返回 `false` 。
+
+回文数是指正序（从左向右）和倒序（从右向左）读都是一样的整数。
+
+- 例如，`121` 是回文，而 `123` 不是。
+
 # 10. 正则表达式匹配
 
 给你一个字符串 `s` 和一个字符规律 `p`，请你来实现一个支持 `'.'` 和 `'*'` 的正则表达式匹配。
@@ -592,7 +602,7 @@ class Solution {
 }
 ```
 
-# [13. 罗马数字转整数](https://leetcode.cn/problems/roman-to-integer/)
+# 13. 罗马数字转整数
 
 给定一个罗马数字，将其转换成整数。
 
@@ -642,7 +652,7 @@ class Solution {
 
 
 
-# [14. 最长公共前缀](https://leetcode.cn/problems/longest-common-prefix/)
+# 14. 最长公共前缀
 
 编写一个函数来查找字符串数组中的最长公共前缀。
 
@@ -651,16 +661,12 @@ class Solution {
 ```java
 class Solution {
     public String longestCommonPrefix(String[] strs) {
-        if (strs == null || strs.length == 0) {
-			return "";
-		}
-        char[]str0=strs[0].toCharArray();
-        int min=Integer.MAX_VALUE;
-        for(String str:strs){
-            char[]tmp=str.toCharArray();
+        String prefix = strs[0];
+        int min=prefix.length();
+        for(String s : strs){
             int index=0;
-            while(index<str0.length&&index<tmp.length){
-                if(str0[index]!=tmp[index]){
+            while(index<s.length()&&index<prefix.length()){
+                if(s.charAt(index)!=prefix.charAt(index)){
                     break;
                 }
                 index++;
@@ -670,7 +676,7 @@ class Solution {
                 return "";
             }
         }
-        return strs[0].substring(0, min);
+        return prefix.substring(0,min);
     }
 }
 ```
@@ -726,11 +732,165 @@ class Solution {
 }
 ```
 
+# 20.有效括号
+
+> [20. 有效的括号 - 力扣（LeetCode）](https://leetcode.cn/problems/valid-parentheses/description/)
+
+```java
+class Solution {
+   public boolean isValid(String s) {
+        /*先入后出的特性*/
+        Stack<Character> stack = new Stack<>();
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            if (c == '(' || c == '{' || c == '[') {
+                /*简化后续判断*/
+                stack.push(c=='('?')':(c=='{'?'}':']'));
+            } else {
+                if (stack.isEmpty()) return false;
+                char top = stack.pop();
+                if (top!=c) return false;
+            }
+        }
+        return stack.isEmpty();
+    }
+}
+```
 
 
 
+# 26.删除有序数组的重复项
+
+> [26. 删除有序数组中的重复项 - 力扣（LeetCode）](https://leetcode.cn/problems/remove-duplicates-from-sorted-array/)
+
+```java
+class Solution {
+   public int removeDuplicates(int[] nums) {
+        int ni=0;
+        for(int i=0;i<nums.length;i++){
+            if(nums[ni]!=nums[i]){
+                nums[++ni]=nums[i];
+            }
+        }
+        return ni+1;
+    }
+}
+```
+
+# 27.移除元素
+
+> [27. 移除元素 - 力扣（LeetCode）](https://leetcode.cn/problems/remove-element/)
+
+```java
+class Solution {
+    public int removeElement(int[] nums, int val) {
+        int ni=0;
+        for(int i=0;i<nums.length;i++){
+            if(nums[i]!=val){
+                nums[ni++]=nums[i];
+            }
+        }
+        return ni;
+    }
+}
+```
 
 
 
+# 28.找出字符串中第一个匹配项的下标
 
+> [28. 找出字符串中第一个匹配项的下标 - 力扣（LeetCode）](https://leetcode.cn/problems/find-the-index-of-the-first-occurrence-in-a-string/description/)
+
+```java
+class Solution {
+    public int strStr(String haystack, String needle) {
+        for(int l=0;l<haystack.length();l++){
+            int r=l;
+            int i=0;
+            while(haystack.charAt(r)==needle.charAt(i)){
+                r++;
+                i++;
+                if(i==needle.length()){
+                    return l;
+                }
+            }
+            l++;
+        }
+        return -1;
+    }
+
+}
+```
+
+kmp
+
+```java
+class Solution {
+    public int strStr(String haystack, String needle) {
+        int[]next=getArrayNext(needle);
+        int i=0,j=0;
+        while(i<haystack.length()&&j<needle.length()){
+            if(haystack.charAt(i)==needle.charAt(j)){
+                /*匹配*/
+                i++;
+                j++;
+            } else if (next[j]==-1) {
+                /*j==0,还不匹配*/
+                i++;
+            }else{
+                /*跳转到匹配的最大前缀后缀数组的下一个*/
+                /*next[]，既代表长度，也代表前缀结束的下一位*/
+                j=next[j];
+            }
+        }
+        return j==needle.length()?i-j:-1;
+    }
+
+    private int[] getArrayNext(String needle) {
+        if (needle.length() == 1) {
+            return new int[] { -1 };
+        }
+        int[] next=new int[needle.length()];
+        /*固定值*/
+        next[0]=-1;
+        next[1]=0;
+        int i=2;
+        /*与i-1比对的下标*/
+        int ni=0;
+        while(i<needle.length()){
+            if(needle.charAt(ni)==needle.charAt(i-1)){
+                /*匹配*/
+                /*++ni，简化后续匹配*/
+                next[i++]=++ni;
+            } else if (ni>0) {
+                ni=next[ni];
+            }else{
+                /*前面没有匹配的*/
+                next[i++]=0;
+            }
+        }
+        return next;
+    }
+}
+```
+
+
+
+# 53.最大子数组和
+
+> [53. 最大子数组和 - 力扣（LeetCode）](https://leetcode.cn/problems/maximum-subarray/description/)
+
+```java
+class Solution {
+    public int maxSubArray(int[] nums) {
+        int currentMax = nums[0];
+        int globalMax = nums[0];
+        for (int i = 1; i < nums.length; i++) {
+            currentMax = Math.max(nums[i], currentMax + nums[i]);
+            globalMax = Math.max(globalMax, currentMax);
+        }
+        return globalMax;
+    }
+}
+```
 

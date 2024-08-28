@@ -8,6 +8,17 @@ import java.util.Scanner;
  * @Date ：Created in 2024/8/13 22:46
  * @Description：
  */
+/*在一款虚拟游戏中生活，你必须进行投资以增强在虚拟游戏中的资产以免被淘汰出局。现有一家 Bank，它提供有若干理财产品 m，风险及投资回报不同，你有 N（元）进行投资，能接受的总风险值为 X。
+
+你要在可接受范围内选择最优的投资方式获得最大回报。
+
+说明：
+
+1、在虚拟游戏中，每项投资风险值相加为总风险值；
+
+2、在虚拟游戏中，最多只能投资 2 个理财产品；
+
+3、在虚拟游戏中，最小单位为整数，不能拆分为小数； 投资额*回报率=投资回报*/
 public class Solution02 {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);

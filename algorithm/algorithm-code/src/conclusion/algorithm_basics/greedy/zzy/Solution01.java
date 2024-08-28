@@ -2,8 +2,8 @@ package conclusion.algorithm_basics.greedy.zzy;
 
 import java.util.*;
 
-import static conclusion.algorithm_basics.CompareData.copyStringArray;
-import static conclusion.algorithm_basics.CompareData.generateRandomStringArray;
+import static conclusion.CompareData.copyStringArray;
+import static conclusion.CompareData.generateRandomStringArray;
 
 /**
  * @Author ：AngryYYYYYY

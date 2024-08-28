@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.PriorityQueue;
 
-import static conclusion.algorithm_basics.CompareData.generateRandomArray;
+import static conclusion.CompareData.generateRandomArray;
 
 /**
  * @Author ：AngryYYYYYY

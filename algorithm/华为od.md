@@ -1429,6 +1429,8 @@ public class Main {
 
 #### coding
 
+狗屎！！！
+
 ```java
 import java.util.*;
 public class Main {
@@ -2020,7 +2022,7 @@ public class Main {
 }
 ```
 
-# 【DP】2024D-分披萨
+# 【DP】2024D-分披萨（9）
 
 #### 题目描述
 
@@ -2069,49 +2071,131 @@ public class Main {
 import java.util.Scanner;
 
 public class Main {
-    public static int[][] dpA;
-    public static int[][] dpB;
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        int N = scanner.nextInt();  // 披萨块数，奇数个
-        int[] slices = new int[N];
-        dpA=new int[N][N];
-        dpB=new int[N][N];
-        for (int i = 0; i < N; i++) {
-            slices[i] = scanner.nextInt();
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        int[] pizzas=new int[n];
+        for (int i = 0; i < n; i++) {
+            pizzas[i]=sc.nextInt();
         }
-
-        int maxPizza = 0;
-        // 从每个位置开始尝试，模拟环状结构
-        for (int i = 0; i < N; i++) {
-            maxPizza = Math.max(maxPizza, choose(slices,  (i-1+N)%N,(i+1)%N,false)+slices[i]);
+        sc.close();
+        int chihuo=sumPizzas(pizzas);
+        System.out.println(chihuo);
+    }
+    private static int sumPizzas(int[] pizzas) {
+        int maxSum=0;
+        int n=pizzas.length;
+        for (int i=0;i<n;i++) {
+            int sum=pizzas[i]+func1(pizzas,(i-1+n)%n,(i+1)%n);
+            maxSum=Math.max(maxSum,sum);
         }
-        System.out.println(maxPizza);
-        scanner.close();
+        return maxSum;
     }
 
-    //上一个选择了index，这轮选什么
-    /*8 2 10 5 7*/
-    private static int choose(int[] slices,int prev,int next,boolean isChiHuoTurn) {
-        int n=slices.length;
-        if(prev == next) {return slices[prev];}
-        if(isChiHuoTurn) {
-            if(dpA[prev][next]!=0){return dpA[prev][next];}
-            dpA[prev][next]=Math.max(choose(slices,(prev-1+n)%n,next,false)+slices[prev],choose(slices,prev,(next+1)%n,false)+slices[next]);
-            return dpA[prev][next];
-        }else {
-            if(dpB[prev][next]!=0){return dpB[prev][next];}
-            if(slices[prev]<slices[next]) {
-                dpB[prev][next]=choose(slices,prev,(next+1)%n,true);
-                return dpB[prev][next];
-            }else {
-                dpB[prev][next]=choose(slices,(prev-1+n)%n,next,true);
-                return dpB[prev][next];
-            }
+    //吃货这一回合后手选择
+    private static int func1(int[] pizzas, int pre,int next) {
+        if(pre==next){
+            return 0;
         }
+        int sum=0;
+        int n=pizzas.length;
+        /*馋嘴选大的*/
+        if(pizzas[pre]>pizzas[next]){
+            /*馋嘴选pre*/
+            /*吃货只能在先手时选next和pre-1*/
+            sum=func2(pizzas,(pre-1+n)%n,next);
+        }else{
+            /*馋嘴选next*/
+            /*吃货只能在先手时选next+1和pre*/
+            sum=func2(pizzas,pre,(next+1)%n);
+        }
+        return sum;
+    }
+    //吃货这一回合先手选择
+    private static int func2(int[] pizzas, int pre,int next) {
+        if(pre==next){
+            return pizzas[pre];
+        }
+        int n=pizzas.length;
+        /*吃货先手选pre和next的较大的返回*/
+        /*pre*/
+        int preVal=pizzas[pre]+func1(pizzas,(pre-1+n)%n,next);
+        /*next*/
+        int nextVal=pizzas[next]+func1(pizzas,pre,(next+1)%n);
+        return Math.max(preVal,nextVal);
     }
 }
 ```
+
+dp优化
+
+```java
+private static int sumPizzas1(int[] pizzas) {
+        int maxSum=0;
+        int n=pizzas.length;
+        /*后手*/
+        int[][] dp1=new int[n][n];
+        /*先手*/
+        int[][] dp2=new int[n][n];
+        for (int i=0;i<n;i++){
+            for (int j=0;j<n;j++){
+                dp1[i][j]=-1;
+                dp2[i][j]=-1;
+            }
+        }
+        for (int i=0;i<n;i++) {
+            int sum=pizzas[i]+func3(pizzas,(i-1+n)%n,(i+1)%n,dp1,dp2);
+            maxSum=Math.max(maxSum,sum);
+        }
+        return maxSum;
+    }
+
+    //吃货这一回合后手选择
+    private static int func3(int[] pizzas, int pre,int next,int[][]dp1,int[][]dp2) {
+        if(dp1[pre][next]!=-1){
+            return dp1[pre][next];
+        }
+        if(pre==next){
+            dp1[pre][next]=0;
+            return 0;
+        }
+        int n=pizzas.length;
+        int sum=0;
+        /*馋嘴选大的*/
+        if(pizzas[pre]>pizzas[next]){
+            /*馋嘴选pre*/
+            /*吃货只能在先手时选next和pre-1*/
+            dp1[pre][next]=dp2[(pre-1+n)%n][next]=func4(pizzas,(pre-1+n)%n,next,dp1,dp2);
+        }else{
+            /*馋嘴选next*/
+            /*吃货只能在先手时选next+1和pre*/
+            dp1[pre][next]=dp2[pre][(next+1)%n]=func4(pizzas,pre,(next+1)%n,dp1,dp2);
+        }
+        return dp1[pre][next];
+    }
+    //吃货这一回合先手选择(真正选择)
+    private static int func4(int[] pizzas, int pre,int next,int[][]dp1,int[][]dp2) {
+        if(dp2[pre][next]!=-1){
+            return dp2[pre][next];
+        }
+        if(pre==next){
+            dp2[pre][next]=pizzas[pre];
+            return pizzas[pre];
+        }
+        int n=pizzas.length;
+        /*吃货先手选pre和next的较大的返回*/
+        /*pre*/
+        dp1[(pre-1+n)%n][next]=func3(pizzas,(pre-1+n)%n,next,dp1,dp2);
+        int preVal=pizzas[pre]+dp1[(pre-1+n)%n][next];
+        /*next*/
+        dp1[pre][(next+1)%n]=func3(pizzas,pre,(next+1)%n,dp1,dp2);
+        int nextVal=pizzas[next]+dp1[pre][(next+1)%n];
+        dp2[pre][next]=Math.max(preVal,nextVal);
+        return dp2[pre][next];
+    }
+```
+
+
 
 # 【模拟】2024D-整数对最小和
 
