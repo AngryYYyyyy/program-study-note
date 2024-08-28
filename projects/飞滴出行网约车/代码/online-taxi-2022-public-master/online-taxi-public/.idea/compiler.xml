@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="api-boss" />
+        <module name="api-passenger" />
+        <module name="service-driver-user" />
+        <module name="service-order" />
+        <module name="service-pay" />
+        <module name="service-auth" />
+        <module name="cloud-gateway" />
+        <module name="api-driver" />
+        <module name="internal-common" />
+        <module name="service-sse-push" />
+        <module name="service-verificationcode-v2" />
+        <module name="service-verificationcode" />
+        <module name="service-price" />
+        <module name="sentinel-token-server" />
+        <module name="service-passenger-user" />
+        <module name="serice-map" />
+      </profile>
+    </annotationProcessing>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="api-boss" options="-parameters" />
+      <module name="api-driver" options="-parameters" />
+      <module name="api-passenger" options="-parameters" />
+      <module name="cloud-gateway" options="-parameters" />
+      <module name="internal-common" options="-parameters" />
+      <module name="sentinel-token-server" options="-parameters" />
+      <module name="serice-map" options="-parameters" />
+      <module name="service-auth" options="-parameters" />
+      <module name="service-driver-user" options="-parameters" />
+      <module name="service-order" options="-parameters" />
+      <module name="service-passenger-user" options="-parameters" />
+      <module name="service-pay" options="-parameters" />
+      <module name="service-price" options="-parameters" />
+      <module name="service-sse-push" options="-parameters" />
+      <module name="service-verificationcode" options="-parameters" />
+      <module name="service-verificationcode-v2" options="-parameters" />
+    </option>
+  </component>
+</project>

@@ -1,0 +1,8 @@
+http://localhost:9001/alipay/pay?subject=%E8%BD%A6%E8%B4%B91&outTradeNo=1006&totalAmount=99
+
+out_trade_no,1006
+total_amount,99.00
+subject,车费1
+
+
+http://localhost:9001/alipay/pay?subject=%E8%BD%A6%E8%B4%B91&outTradeNo=1584370883330600962&totalAmount=99

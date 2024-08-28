@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/api-boss/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/api-boss/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/api-driver/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/api-driver/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/api-passenger/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/api-passenger/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/cloud-gateway/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/cloud-gateway/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/internal-common/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/sentinel-token-server/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/serice-map/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/serice-map/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/service-auth/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/service-driver-user/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/service-driver-user/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/service-order/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/service-order/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/service-passenger-user/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/service-passenger-user/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/service-pay/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/service-pay/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/service-price/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/service-price/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/service-sse-push/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/service-sse-push/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/service-verificationcode-v2/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/service-verificationcode/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/service-verificationcode/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />
+  </component>
+</project>

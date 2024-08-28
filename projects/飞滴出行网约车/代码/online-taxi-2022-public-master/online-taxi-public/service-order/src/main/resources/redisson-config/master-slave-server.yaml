@@ -1,0 +1,5 @@
+masterSlaveServersConfig:
+  masterAddress: "redis://localhost:6379"
+  slaveAddresses:
+    - "redis://localhost:6380"
+    - "redis://localhost:6381"

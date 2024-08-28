@@ -1,0 +1,60 @@
+{
+	"pages": [ 
+		{
+			"path": "pages/index/index",
+			"style": {
+				"navigationBarTitleText": "飞滴出行",
+				"titleImage":"/static/logo.png"
+			}
+		},
+		{
+			"path": "pages/city",
+			"style": {
+				"navigationBarTitleText": "飞滴出行",
+				"titleImage":"/static/logo.png"
+			}
+		},
+		{
+			"path": "pages/createOrder",
+			"style": {
+				// "navigationBarTitleText": "飞滴出行",
+				"titleImage":"/static/logo.png"
+			}
+		},
+		{
+			"path": "pages/orderDetail",
+			"style": {
+				// "navigationBarTitleText": "飞滴出行",
+				"titleImage":"/static/logo.png"
+			}
+		},
+		{
+			"path": "pages/pay",
+			"style": {
+				// "navigationBarTitleText": "飞滴出行",
+				"titleImage":"/static/logo.png"
+			}
+		},
+		{
+			"path": "pages/login",
+			"style": {
+				// "navigationBarTitleText": "飞滴出行",
+				"titleImage":"/static/logo.png"
+			}
+		},
+		{
+			"path": "pages/account",
+			"style": {
+				// "navigationBarTitleText": "飞滴出行",
+				"titleImage":"/static/logo.png"
+			}
+		}
+
+	],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "uni-app",
+		"navigationBarBackgroundColor": "#F8F8F8",
+		"backgroundColor": "#F8F8F8"
+	}
+}

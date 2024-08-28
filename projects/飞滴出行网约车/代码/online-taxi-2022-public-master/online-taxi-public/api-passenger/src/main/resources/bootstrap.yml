@@ -1,0 +1,12 @@
+spring:
+  cloud:
+    nacos:
+      config:
+        server-addr: 127.0.0.1:8848
+        namespace: devId
+        file-extension: yaml
+  application:
+    name: api-passenger
+  profiles:
+    active: dev
+

@@ -1,0 +1,56 @@
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/service-order?characterEncoding=utf-8&serverTimezone=GMT%2B8
+    username: root
+    password: root
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+  application:
+    name: service-order
+
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    database: 0
+
+
+logging:
+  level:
+    com.baomidou: debug
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      id-type: 0
+
+zookeeper:
+  # 单机
+  #address: 192.168.1.2:2181
+  # 集群
+  address: 192.168.1.2:2181,192.168.1.2:2182,192.168.1.2:2183
+  timeout: 100000
+
+seata:
+  service:
+    vgroup-mapping.my_tx: seata-tc
+    #    grouplist.seata-tc: 127.0.0.1:8091;127.0.0.1:8092;127.0.0.1:8093
+    grouplist.seata-tc: 127.0.0.1:8091
+  tx-service-group: my_tx
+
+---
+spring:
+  profiles: 8007
+server:
+  port: 8007
+  servlet:
+    context-path: /service-order
+---
+spring:
+  profiles: 8008
+server:
+  port: 8008

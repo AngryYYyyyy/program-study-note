@@ -1,0 +1,20 @@
+server:
+  port: 8182
+spring:
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+      # 虚拟ip
+#        server-addr: 192.168.1.10:80,192.168.1.11:80
+        # nacos 真实的ip
+#        server-addr: 192.168.1.157:3333,192.168.1.157:4444,192.168.1.157:5555
+        # 单台redis
+        cluster-name: sh
+    sentinel:
+      transport:
+        dashboard: localhost:9091
+#      web-context-unify: false
+  application:
+    name: service-verificationcode
+

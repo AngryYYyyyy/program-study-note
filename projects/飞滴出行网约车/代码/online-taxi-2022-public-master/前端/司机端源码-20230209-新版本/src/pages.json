@@ -1,0 +1,46 @@
+{
+	//pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+	"pages": [ 
+		{
+			"path": "pages/index",
+			"style": {
+				// "navigationBarTitleText": "飞滴出行-司机端",
+				"titleImage":"/static/logo.png"
+			}
+		},
+		{
+			"path": "pages/city",
+			"style": {
+				// "navigationBarTitleText": "飞滴出行-司机端",
+				"titleImage":"/static/logo.png"
+			}
+		},
+		{
+			"path": "pages/orderDetail",
+			"style": {
+				// "navigationBarTitleText": "飞滴出行-司机端",
+				"titleImage":"/static/logo.png"
+			}
+		},
+		{
+			"path": "pages/login",
+			"style": {
+				// "navigationBarTitleText": "飞滴出行-司机端",
+				"titleImage":"/static/logo.png"
+			}
+		},
+		{
+			"path": "pages/account",
+			"style": {
+				"navigationBarTitleText": "飞滴出行-司机端"
+			}
+		}
+
+	],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "uni-app",
+		"navigationBarBackgroundColor": "#F8F8F8",
+		"backgroundColor": "#F8F8F8"
+	}
+}

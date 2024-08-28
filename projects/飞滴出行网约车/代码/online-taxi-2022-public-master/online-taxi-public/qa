@@ -1,0 +1,76 @@
+整体联调：
+
+乘客端：
+手机号：18178100001
+验证码：707987
+"accessToken": eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJwaG9uZSI6IjE4MTc4MTAwMDAxIiwiaWRlbnRpdHkiOiIxIiwidG9rZW5UaW1lIjoiU3VuIE5vdiAyMCAxMzoyODo0OCBDU1QgMjAyMiIsInRva2VuVHlwZSI6ImFjY2Vzc1Rva2VuIn0.l405hb9ya9sUso2GYfc1Lr4I93zwcC7u0hSbFlcWLl4
+
+预估价格：
+{
+    "depLongitude": "116.321554",
+    "depLatitude": "39.895008",
+    "destLongitude": "116.309709",
+    "destLatitude": "39.924239",
+    "cityCode":"110000",
+    "vehicleType":1
+}
+
+
+
+司机端：
+手机号：13910730001
+验证码：390529
+"accessToken": eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJwaG9uZSI6IjEzOTEwNzMwMDAxIiwiaWRlbnRpdHkiOiIyIiwidG9rZW5UaW1lIjoiU3VuIE5vdiAyMCAxMzo1MTozOCBDU1QgMjAyMiIsInRva2VuVHlwZSI6ImFjY2Vzc1Rva2VuIn0.aYlxkleCIOU1HAzKXcwXjimmQOG1imr8vhnCW_HyD0s
+
+
+订单：
+1594540113581588482
+
+
+
+
+
+
+
+
+
+
+
+
+{
+    "carId": 1594231277809336321,
+    "points": [
+        {
+            "location": "116.317949,39.896654",
+            "locatetime": 1669005870513
+        },
+        {
+            "location": "116.313486,39.895995",
+            "locatetime": 1669005870513
+        },
+        {
+            "location": "116.310567,39.897181",
+            "locatetime": 1669005870513
+        },
+        {
+            "location": "116.310224,39.909691",
+            "locatetime": 1669005870513
+        },
+        {
+            "location": "116.310224,39.915484",
+            "locatetime": 1669005870513
+        },
+        {
+            "location": "116.310224,39.917196",
+            "locatetime": 1669005870513
+        },
+        {
+            "location": "116.310224,39.920224",
+            "locatetime": 1669005870513
+        },
+        {
+            "location": "116.309709,39.922989",
+            "locatetime": 1669005870513
+        },
+    ]
+}

@@ -1,0 +1,46 @@
+# Windows thumbnail cache files
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+
+# Dump file
+*.stackdump
+
+# Folder config file
+[Dd]esktop.ini
+
+# Recycle Bin used on file shares
+$RECYCLE.BIN/
+
+# Windows Installer files
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+
+# Windows shortcuts
+*.lnk
+online-taxi-public/api-passenger/target/classes/com/mashibing/apipassenger/controller/VerificationCodeController.class
+online-taxi-public/api-passenger/target/classes/com/mashibing/apipassenger/request/VerificationCodeDTO.class
+online-taxi-public/api-passenger/target/classes/com/mashibing/apipassenger/service/VerificationCodeService.class
+
+online-taxi-public/service-price/target/
+online-taxi-public/internal-common/target/
+online-taxi-public/api-passenger/target/
+online-taxi-public/serice-map/target/
+online-taxi-public/service-driver-user/target/
+online-taxi-public/api-boss/target/
+online-taxi-public/api-driver/target/
+online-taxi-public/service-order/target/
+online-taxi-public/service-passenger-user/target/
+online-taxi-public/service-price/target/
+online-taxi-public/service-verificationcode/target/
+online-taxi-public/cloud-gateway/target/
+online-taxi-public/sentinel-token-server/target/
+online-taxi-public/service-pay/target/
+online-taxi-public/service-sse-push/target/
+online-taxi-public/cloud-gateway/target/classes/com/mashibing/filter/AuthFilter.class
+online-taxi-public/.idea/modules.xml
+online-taxi-public/.idea/online-taxi-public.iml

@@ -1,0 +1,9 @@
+ceshi-application: ${ceshi}
+spring:
+  datasource:
+    driver-class-name: ${db.driver-class-name}
+    url: ${db.url}
+    username: ${db.username}
+    # gRvIL/fNPPb66/PN2d6uHQ==
+    password:  ${db.password}
+
